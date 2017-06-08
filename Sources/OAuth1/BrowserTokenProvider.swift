@@ -31,7 +31,7 @@ public class BrowserTokenProvider: TokenProvider {
   public init(credentials: String, token tokenfile: String) throws {
     let path = ProcessInfo.processInfo.environment["HOME"]!
       + "/.credentials/" + credentials
-    let data = try String(contentsOfFile: path)
+    let data = try String(contentsOfFile: path, encoding: .utf8)
     let yaml = try Yaml.load(data)
     switch yaml {
     case let .dictionary(d):
