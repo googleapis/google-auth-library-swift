@@ -23,6 +23,6 @@ internal func openURL(_ url: URL) {
       print("default browser could not be opened")
     }
   #else
-    printf("openURL(\(String(describing:url))) is not implemented on this platform.")
+    print("openURL(\(String(describing:url))) is not implemented on this platform.")
   #endif
 }
