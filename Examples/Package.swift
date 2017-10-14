@@ -21,6 +21,6 @@ let package = Package (
             Target(name: "Twitter")],
   dependencies: [
     .Package(url: "https://github.com/google/auth-library-swift.git",
-             Version(0,2,0)),
+             Version(0,2,3)),
     ]
 )
