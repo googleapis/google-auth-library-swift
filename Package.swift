@@ -20,8 +20,8 @@ let package = Package(
     Target(name: "OAuth2"),
     ],
   dependencies: [
-    .Package(url: "https://github.com/IBM-Swift/Kitura.git", Version(1, 7, 3)),
+    .Package(url: "https://github.com/IBM-Swift/Kitura.git", majorVersion: 1, minor: 7),
     .Package(url: "https://github.com/behrang/YamlSwift.git", Version(3, 4, 0)),
-    .Package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", Version(0, 6, 9)),
+    .Package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", Version(0, 7, 2)),
     ]
 )
