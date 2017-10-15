@@ -24,7 +24,7 @@ files are in [Examples/credentials](Examples/credentials)
 and include client IDs, client secrets, and OAuth service URLs.
 
 When OAuth services require registered callback URLs, these should be
-set to "http://localhost:8080/__service__/callback" where __service__ is 
+set to `http://localhost:8080/SERVICE/callback` where `SERVICE` is 
 specified in the corresponding credentials YAML file. The temporary 
 web server runs locally on port 8080.
 
