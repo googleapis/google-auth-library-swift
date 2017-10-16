@@ -89,6 +89,26 @@ class GoogleSession {
     //request.gqlQuery = query
     //print("\(request)")
     //let result = try service.runquery(request)
+  }
 
+  func translate(_ input:String) throws {
+    let sem = DispatchSemaphore(value: 0)
+    var responseData : Data?
+    var parameters : [String:String] = [:]
+    let postJSON = ["q":input, "source":"en", "target":"es", "format":"text"]
+    let postData = try JSONSerialization.data(withJSONObject:postJSON)
+    connection.performRequest(
+      method:"POST",
+      urlString:"https://translation.googleapis.com/language/translate/v2",
+      parameters: &parameters,
+      body: postData) {(data, response, error) in
+        responseData = data
+        sem.signal()
+    }
+    _ = sem.wait(timeout: DispatchTime.distantFuture)
+    if let data = responseData {
+      let response = String(data: data, encoding: .utf8)!
+      print(response)
+    }
   }
 }

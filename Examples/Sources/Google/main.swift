@@ -52,6 +52,11 @@ func main() throws {
   if arguments[1] == "data" {
     try google.getData()
   }
+
+  if arguments[1] == "translate" && arguments.count > 2 {
+    let text = arguments[2]
+    try google.translate(text)
+  }
 }
 
 do {
