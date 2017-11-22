@@ -18,10 +18,13 @@ let package = Package(
   targets: [
     Target(name: "OAuth1"),
     Target(name: "OAuth2"),
+    Target(name: "TokenProvider", dependencies: ["OAuth2"]),
     ],
   dependencies: [
     .Package(url: "https://github.com/IBM-Swift/Kitura.git", majorVersion: 1, minor: 7),
     .Package(url: "https://github.com/behrang/YamlSwift.git", Version(3, 4, 0)),
-    .Package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", Version(0, 7, 2)),
+    .Package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", majorVersion: 0, minor: 8),
+    .Package(url: "https://github.com/attaswift/BigInt", majorVersion: 3, minor: 0),
+    .Package(url: "https://github.com/timburks/SwiftyBase64", majorVersion: 1, minor: 2),
     ]
 )
