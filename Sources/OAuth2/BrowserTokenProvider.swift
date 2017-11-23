@@ -19,6 +19,10 @@ import Kitura
 import CryptoSwift
 import SwiftyJSON
 
+struct AuthError : Error {
+
+}
+
 public class BrowserTokenProvider: TokenProvider {
   private var authorizeURL: String?
   private var accessTokenURL: String?
@@ -64,8 +68,12 @@ public class BrowserTokenProvider: TokenProvider {
     if tokenfile != "" {
       do {
         let data = try Data(contentsOf: URL(fileURLWithPath: tokenfile))
-        let json = JSON(data: data)
-        token = Token(json: json)
+        let decoder = JSONDecoder()
+        guard let token = try? decoder.decode(Token.self, from: data)
+          else {
+            throw AuthError()
+        }
+        self.token = token
       } catch {
         // ignore errors due to missing token files
       }
@@ -136,8 +144,10 @@ public class BrowserTokenProvider: TokenProvider {
     }
     _ = sem.wait(timeout: DispatchTime.distantFuture)
     if contentType != nil && contentType!.contains("application/json") {
-      let json = JSON(data: responseData!)
-      return Token(json: json)
+
+      let decoder = JSONDecoder()
+      let token = try! decoder.decode(Token.self, from: responseData!)
+      return token
     } else { // assume "application/x-www-form-urlencoded"
       let urlComponents = URLComponents(string: "http://example.com?" + String(data: responseData!, encoding: .utf8)!)!
       return Token(urlComponents: urlComponents)

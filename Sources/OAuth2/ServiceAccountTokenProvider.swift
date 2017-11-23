@@ -14,18 +14,7 @@
 
 import Foundation
 
-public struct ServiceAccountToken : Decodable {
-  let AccessToken : String
-  let ExpiresIn : Int
-  let TokenType : String
-  enum CodingKeys: String, CodingKey {
-    case AccessToken = "access_token"
-    case ExpiresIn = "expires_in"
-    case TokenType = "token_type"
-  }
-}
-
-struct Credentials : Codable {
+struct ServiceAccountCredentials : Codable {
   let CredentialType : String
   let ProjectId: String
   let PrivateKeyId: String
@@ -51,7 +40,7 @@ struct Credentials : Codable {
 }
 
 public class ServiceAccountTokenProvider {
-  var credentials : Credentials
+  var credentials : ServiceAccountCredentials
   var rsaKey : RSAKey
 
   public init?(credentialsFileName : String) {
@@ -60,7 +49,8 @@ public class ServiceAccountTokenProvider {
       return nil
     }
     let decoder = JSONDecoder()
-    guard let credentials = try? decoder.decode(Credentials.self, from: credentialsData)
+    guard let credentials = try? decoder.decode(ServiceAccountCredentials.self,
+                                                from: credentialsData)
       else {
         return nil
     }
@@ -72,7 +62,7 @@ public class ServiceAccountTokenProvider {
     self.rsaKey = rsaKey
   }
 
-  public func fetchToken(callback:@escaping (ServiceAccountToken?, Error?) -> Void) throws {
+  public func fetchToken(callback:@escaping (Token?, Error?) -> Void) throws {
     let iat = Date()
     let exp = iat.addingTimeInterval(3600)
     let jwtClaimSet = JWTClaimSet(Issuer:credentials.ClientEmail,
@@ -103,7 +93,7 @@ public class ServiceAccountTokenProvider {
     {(data, response, error) -> Void in
       let decoder = JSONDecoder()
       if let data = data,
-        let token = try? decoder.decode(ServiceAccountToken.self, from: data) {
+        let token = try? decoder.decode(Token.self, from: data) {
         callback(token, error)
       } else {
         callback(nil, error)

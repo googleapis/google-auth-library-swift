@@ -14,7 +14,6 @@
 
 import Foundation
 import Dispatch
-import SwiftyJSON
 
 public class GoogleTokenProvider: TokenProvider {
 
@@ -31,12 +30,11 @@ public class GoogleTokenProvider: TokenProvider {
     var request = URLRequest(url: urlComponents.url!)
     request.setValue("Google", forHTTPHeaderField:"Metadata-Flavor")
     request.httpMethod = "GET"
-    var accessToken = ""
     let session = URLSession(configuration: URLSessionConfiguration.default)
     let task: URLSessionDataTask = session.dataTask(with:request) { (data, response, error) -> Void in
-      let json = JSON(data:data!)
-      accessToken = json["access_token"].string!
-      self.token = Token(accessToken:accessToken)
+      let decoder = JSONDecoder()
+      let token = try? decoder.decode(Token.self, from: data!)
+      self.token = token!
       sem.signal()
     }
     task.resume()

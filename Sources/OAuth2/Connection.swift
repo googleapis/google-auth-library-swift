@@ -76,7 +76,7 @@ public class Connection {
     guard let token = provider.token else {
       return
     }
-    guard let accessToken = token.accessToken else {
+    guard let accessToken = token.AccessToken else {
       return
     }
     Connection.performRequest(
