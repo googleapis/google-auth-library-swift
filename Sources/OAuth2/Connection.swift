@@ -17,7 +17,6 @@ import Dispatch
 import Yaml
 import Kitura
 import CryptoSwift
-import SwiftyJSON
 
 public class Connection {
   public var provider: TokenProvider

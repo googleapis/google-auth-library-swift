@@ -18,7 +18,7 @@ let package = Package(
   targets: [
     Target(name: "OAuth1"),
     Target(name: "OAuth2"),
-    Target(name: "TokenProvider", dependencies: ["OAuth2"]),
+    Target(name: "TokenProvider", dependencies: ["OAuth2", "OAuth1"]),
     ],
   dependencies: [
     .Package(url: "https://github.com/IBM-Swift/Kitura.git", majorVersion: 1, minor: 7),

@@ -12,9 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 import Foundation
-import SwiftyJSON
 
-public class Token {
+public struct Token : Codable {
   public var oAuthToken: String?
   public var oAuthTokenSecret: String?
   public var oAuthVerifier: String?
@@ -22,6 +21,16 @@ public class Token {
   public var screenName: String?
   public var userID: String?
   public var creationTime: Date?
+
+  enum CodingKeys: String, CodingKey {
+    case oAuthToken = "oauth_token"
+    case oAuthTokenSecret = "oauth_token_secret"
+    case oAuthVerifier = "oauth_verifier"
+    case returnAddress = "return_address"
+    case screenName = "screen_name"
+    case userID = "user_id"
+    case creationTime = "creation_time"
+  }
 
   public init(urlComponents: URLComponents) {
     creationTime = Date()
@@ -48,19 +57,8 @@ public class Token {
   }
 
   func save(_ filename: String) throws {
-    let data = try JSONSerialization.data(withJSONObject: self.asDictionary)
+    let encoder = JSONEncoder()
+    let data = try encoder.encode(self)
     try data.write(to: URL(fileURLWithPath: filename))
-  }
-
-  public init(json: JSON) {
-    oAuthToken = json["oAuthToken"].string
-    oAuthTokenSecret = json["oAuthTokenSecret"].string
-  }
-
-  public var asDictionary: [String: String] {
-    var dictionary: [String: String] = [:]
-    dictionary["oAuthToken"] = oAuthToken
-    dictionary["oAuthTokenSecret"] = oAuthTokenSecret
-    return dictionary
   }
 }

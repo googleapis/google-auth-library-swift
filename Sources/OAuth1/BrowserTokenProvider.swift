@@ -17,7 +17,10 @@ import Dispatch
 import Yaml
 import Kitura
 import CryptoSwift
-import SwiftyJSON
+
+struct AuthError : Error {
+
+}
 
 public class BrowserTokenProvider: TokenProvider {
   public var consumerKey: String?
@@ -66,8 +69,12 @@ public class BrowserTokenProvider: TokenProvider {
     if tokenfile != "" {
       do {
         let data = try Data(contentsOf: URL(fileURLWithPath: tokenfile))
-        let json = JSON(data: data)
-        token = Token(json: json)
+        let decoder = JSONDecoder()
+        guard let token = try? decoder.decode(Token.self, from: data)
+          else {
+            throw AuthError()
+        }
+        self.token = token
       } catch {
         // ignore errors due to missing session files
       }

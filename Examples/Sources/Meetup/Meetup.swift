@@ -14,7 +14,6 @@
 
 import Foundation
 import Dispatch
-import SwiftyJSON
 import OAuth2
 
 class MeetupSession {

@@ -17,7 +17,6 @@ import Dispatch
 import Yaml
 import Kitura
 import CryptoSwift
-import SwiftyJSON
 
 struct AuthError : Error {
 

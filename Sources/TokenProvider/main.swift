@@ -22,7 +22,9 @@ func main() throws {
     let sem = DispatchSemaphore(value: 0)
     try provider.fetchToken() {(token, error) -> Void in
       if let token = token {
-        print("TOKEN \(token)")
+        let encoder = JSONEncoder()
+        let token = try! encoder.encode(token)
+        print("\(String(data:token, encoding:.utf8)!)")
       }
       if let error = error {
         print("ERROR \(error)")
