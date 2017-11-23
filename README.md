@@ -19,7 +19,7 @@ For OAuth1 and OAuth2 examples, see the service clients in the
 [Examples](Examples) directory.
 
 Services look for OAuth configuration information in "credentials" YAML files
-that are expected to be in $HOME/.credentials. Sample credentials
+that are expected to be in `$HOME/.credentials`. Sample credentials
 files are in [Examples/credentials](Examples/credentials)
 and include client IDs, client secrets, and OAuth service URLs.
 
