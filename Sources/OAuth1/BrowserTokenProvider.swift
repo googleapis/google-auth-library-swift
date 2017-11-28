@@ -22,7 +22,7 @@ struct AuthError : Error {
 
 }
 
-public class BrowserTokenSource : TokenSource {
+public class BrowserTokenProvider : TokenProvider {
   public var consumerKey: String?
   public var consumerSecret: String?
   private var requestTokenURL: String?

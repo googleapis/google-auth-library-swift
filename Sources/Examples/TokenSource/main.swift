@@ -18,9 +18,9 @@ import OAuth2
 let CREDENTIALS = "/Users/timburks/Desktop/TokenProvider/credentials.json"
 
 func main() throws {
-  if let source = ServiceAccountTokenSource(credentialsFileName:CREDENTIALS) {
+  if let provider = ServiceAccountTokenProvider(credentialsFileName:CREDENTIALS) {
     let sem = DispatchSemaphore(value: 0)
-    try source.withToken() {(token, error) -> Void in
+    try provider.withToken() {(token, error) -> Void in
       if let token = token {
         let encoder = JSONEncoder()
         if let token = try? encoder.encode(token) {

@@ -15,9 +15,9 @@
 import Foundation
 import Dispatch
 
-public class GoogleTokenSource: TokenSource {
+public class GoogleCloudMetadataTokenProvider : TokenProvider {
   public func withToken(_ callback: @escaping (Token?, Error?) -> Void) throws {
-    
+	callback(token, nil)
   }
 
   public var token: Token?

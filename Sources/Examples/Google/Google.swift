@@ -19,8 +19,8 @@ import OAuth2
 class GoogleSession {
   var connection : Connection
 
-  init(tokenSource: TokenSource) throws{
-    connection = try Connection(source:tokenSource)
+  init(tokenProvider: TokenProvider) throws{
+    connection = try Connection(provider:tokenProvider)
   }
 
   func getMe() throws {
@@ -94,7 +94,7 @@ class GoogleSession {
     let sem = DispatchSemaphore(value: 0)
     var responseData : Data?
     let parameters : [String:String] = [:]
-    let postJSON = ["q":input, "source":"en", "target":"es", "format":"text"]
+    let postJSON = ["q":input, "provider":"en", "target":"es", "format":"text"]
     let postData = try JSONSerialization.data(withJSONObject:postJSON)
     try connection.performRequest(
       method:"POST",

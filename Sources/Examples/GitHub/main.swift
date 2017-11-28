@@ -26,13 +26,13 @@ func main() throws {
     return
   }
 
-  let tokenSource = try BrowserTokenSource(credentials:CREDENTIALS, token:TOKEN)
+  let tokenProvider = try BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)
 
-  let github = try GitHubSession(tokenSource:tokenSource)
+  let github = try GitHubSession(tokenProvider:tokenProvider)
 
   if arguments[1] == "login" {
-    try tokenSource.signIn(scopes:["user"])
-    try tokenSource.saveToken(TOKEN)
+    try tokenProvider.signIn(scopes:["user"])
+    try tokenProvider.saveToken(TOKEN)
   }
 
   if arguments[1] == "me" {

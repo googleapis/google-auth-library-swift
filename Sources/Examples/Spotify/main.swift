@@ -26,19 +26,19 @@ func main() throws {
     return
   }
 
-  let tokenSource = try BrowserTokenSource(credentials:CREDENTIALS, token:TOKEN)
+  let tokenProvider = try BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)
 
-  let spotify = try SpotifySession(tokenSource:tokenSource)
+  let spotify = try SpotifySession(tokenProvider:tokenProvider)
 
   if arguments[1] == "login" {
-    try tokenSource.signIn(scopes:["playlist-read-private",
+    try tokenProvider.signIn(scopes:["playlist-read-private",
                                      "playlist-modify-public",
                                      "playlist-modify-private",
                                      "user-library-read",
                                      "user-library-modify",
                                      "user-read-private",
                                      "user-read-email"])
-    try tokenSource.saveToken(TOKEN)
+    try tokenProvider.saveToken(TOKEN)
   }
 
   if arguments[1] == "me" {

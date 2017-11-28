@@ -19,10 +19,10 @@ import Kitura
 import CryptoSwift
 
 public class Connection {
-  public var source: TokenSource
+  public var provider: TokenProvider
 
-  public init(source: TokenSource) throws {
-    self.source = source
+  public init(provider: TokenProvider) throws {
+    self.provider = provider
   }
 
   public class func performRequest(
@@ -72,7 +72,7 @@ public class Connection {
     body: Data!,
     callback: @escaping (Data?, URLResponse?, Error?) -> Void) {
 
-    try! source.withToken {token, err in
+    try! provider.withToken {token, err in
       guard let token = token else {
         return
       }

@@ -27,17 +27,17 @@ func main() throws {
   }
 
   #if os(OSX)
-    let tokenSource = try BrowserTokenSource(credentials:CREDENTIALS, token:TOKEN)
+    let tokenProvider = try BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)
   #else
-    let tokenSource = try GoogleTokenSource()
+    let tokenProvider = try GoogleCloudMetadataTokenProvider()
   #endif
 
-  let google = try GoogleSession(tokenSource:tokenSource)
+  let google = try GoogleSession(tokenProvider:tokenProvider)
 
   if arguments[1] == "login" {
     #if os(OSX)
-      try tokenSource.signIn(scopes:["profile", "https://www.googleapis.com/auth/contacts.readonly", "https://www.googleapis.com/auth/cloud-platform"])
-      try tokenSource.saveToken(TOKEN)
+      try tokenProvider.signIn(scopes:["profile", "https://www.googleapis.com/auth/contacts.readonly", "https://www.googleapis.com/auth/cloud-platform"])
+      try tokenProvider.saveToken(TOKEN)
     #endif
   }
 

@@ -20,8 +20,8 @@ class SpotifySession {
 
   var connection : Connection
 
-  init(tokenSource: TokenSource) throws{
-    connection = try Connection(source:tokenSource)
+  init(tokenProvider: TokenProvider) throws{
+    connection = try Connection(provider:tokenProvider)
   }
 
   func getUser() throws {

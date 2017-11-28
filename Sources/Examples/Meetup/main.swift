@@ -26,13 +26,13 @@ func main() throws {
     return
   }
 
-  let tokenSource = try BrowserTokenSource(credentials:CREDENTIALS, token:TOKEN)
+  let tokenProvider = try BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)
 
-  let meetup = try MeetupSession(tokenSource:tokenSource)
+  let meetup = try MeetupSession(tokenProvider:tokenProvider)
 
   if arguments[1] == "login" {
-    try tokenSource.signIn(scopes:["basic", "ageless"])
-    try tokenSource.saveToken(TOKEN)
+    try tokenProvider.signIn(scopes:["basic", "ageless"])
+    try tokenProvider.saveToken(TOKEN)
   }
 
   if arguments[1] == "me" {

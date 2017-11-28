@@ -20,10 +20,10 @@ import CryptoSwift
 
 public class Connection {
 
-  public var source : TokenSource
+  public var provider : TokenProvider
 
-  public init(source : TokenSource) throws {
-    self.source = source
+  public init(provider : TokenProvider) throws {
+    self.provider = provider
   }
 
   class func signOAuthRequest(
@@ -113,7 +113,7 @@ public class Connection {
     parameters : [String:String],
     callback: @escaping (Data?, URLResponse?, Error?)->()) throws {
 
-    try source.withToken() {(token, err) in
+    try provider.withToken() {(token, err) in
       guard let token = token else {
         return
       }
@@ -128,8 +128,8 @@ public class Connection {
         urlString: urlString,
         parameters: parameters,
         tokenSecret: oAuthTokenSecret,
-        consumerKey: self.source.consumerKey!,
-        consumerSecret: self.source.consumerSecret!,
+        consumerKey: self.provider.consumerKey!,
+        consumerSecret: self.provider.consumerSecret!,
         callback: callback)
     }
   }

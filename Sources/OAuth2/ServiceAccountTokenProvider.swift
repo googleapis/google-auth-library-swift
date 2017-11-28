@@ -39,7 +39,7 @@ struct ServiceAccountCredentials : Codable {
   }
 }
 
-public class ServiceAccountTokenSource : TokenSource {
+public class ServiceAccountTokenProvider : TokenProvider {
   public var token: Token?
   
   var credentials : ServiceAccountCredentials

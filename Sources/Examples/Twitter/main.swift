@@ -26,13 +26,13 @@ func main() throws {
     return
   }
 
-  let tokenSource = try BrowserTokenSource(credentials:CREDENTIALS, token:TOKEN)
+  let tokenProvider = try BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)
 
-  let twitter = try TwitterSession(tokenSource:tokenSource)
+  let twitter = try TwitterSession(tokenProvider:tokenProvider)
 
   if arguments[1] == "login" {
-    try tokenSource.signIn()
-    try tokenSource.saveToken(TOKEN)
+    try tokenProvider.signIn()
+    try tokenProvider.saveToken(TOKEN)
   }
 
   if arguments[1] == "tweets" {
