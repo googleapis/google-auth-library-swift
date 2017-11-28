@@ -11,16 +11,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-import PackageDescription
-let package = Package (
-  name: "Examples",
-  targets: [Target(name: "GitHub"),
-            Target(name: "Google"),
-            Target(name: "Meetup"),
-            Target(name: "Spotify"),
-            Target(name: "Twitter")],
-  dependencies: [
-    .Package(url: "https://github.com/google/auth-library-swift.git",
-             Version(0,2,3)),
-    ]
-)
+
+public protocol TokenSource {
+  func withToken(_ callback:@escaping (Token?, Error?) -> Void) throws
+
+  var consumerKey: String? { get }
+  var consumerSecret: String? { get }
+}

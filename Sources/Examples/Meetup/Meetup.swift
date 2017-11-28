@@ -20,8 +20,8 @@ class MeetupSession {
 
   var connection : Connection
 
-  init(tokenProvider: TokenProvider) throws{
-    connection = try Connection(provider:tokenProvider)
+  init(tokenSource: TokenSource) throws{
+    connection = try Connection(source:tokenSource)
   }
 
   func getMe() throws {
@@ -51,14 +51,14 @@ class MeetupSession {
     }
     _ = sem.wait(timeout: DispatchTime.distantFuture)
     if let data = responseData {
-      let json = JSON(data: data)
-      for rsvp in json.array! {
-        if let id = rsvp["member"]["id"].number ,
-          let name = rsvp["member"]["name"].string,
-          let bio = rsvp["member"]["bio"].string {
-          print("\(id),\(name),\(bio)")
-        }
-      }
+      //let json = JSON(data: data)
+      //for rsvp in json.array! {
+      //  if let id = rsvp["member"]["id"].number ,
+      //    let name = rsvp["member"]["name"].string,
+      //    let bio = rsvp["member"]["bio"].string {
+      //    print("\(id),\(name),\(bio)")
+      //  }
+      //}
     }
   }
 
@@ -69,20 +69,20 @@ class MeetupSession {
     connection.performRequest(
       method:"GET",
       urlString:"https://api.meetup.com/sviphone/events",
-      parameters: &parameters,
+      parameters: parameters,
       body: nil) {(data, response, error) in
         responseData = data
         sem.signal()
     }
     _ = sem.wait(timeout: DispatchTime.distantFuture)
     if let data = responseData {
-      let json = JSON(data: data)
-      for event in json.array! {
-        if let id = event["id"].string,
-          let name = event["name"].string {
-          print("\(id),\(name)")
-        }
-      }
+      //let json = JSON(data: data)
+      //for event in json.array! {
+      //  if let id = event["id"].string,
+      //    let name = event["name"].string {
+      //    print("\(id),\(name)")
+      //  }
+      //}
     }
   }
 }

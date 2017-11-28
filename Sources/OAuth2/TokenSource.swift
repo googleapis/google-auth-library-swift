@@ -12,6 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-public protocol TokenProvider {
-  var token: Token? { get }
+public protocol TokenSource {
+  func withToken(_ callback:@escaping (Token?, Error?) -> Void) throws
 }

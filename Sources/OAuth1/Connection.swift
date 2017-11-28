@@ -20,15 +20,10 @@ import CryptoSwift
 
 public class Connection {
 
-  public var provider : TokenProvider
+  public var source : TokenSource
 
-  public init(provider : TokenProvider) throws {
-    self.provider = provider
-  }
-
-  public var token : Token? { get {
-    return provider.token
-    }
+  public init(source : TokenSource) throws {
+    self.source = source
   }
 
   class func signOAuthRequest(
@@ -59,13 +54,14 @@ public class Connection {
   public class func performRequest(
     method : String,
     urlString : String,
-    parameters : inout [String:String],
+    parameters : [String:String],
     tokenSecret : String,
     consumerKey : String,
     consumerSecret : String,
     callback: @escaping (Data?, URLResponse?, Error?)->()) {
 
     // prepare the request for signing
+    var parameters = parameters
     parameters["oauth_consumer_key"] = consumerKey
     parameters["oauth_version"] = "1.0"
     parameters["oauth_nonce"] = UUID().uuidString
@@ -114,32 +110,36 @@ public class Connection {
   public func performRequest(
     method : String,
     urlString : String,
-    parameters : inout [String:String],
-    callback: @escaping (Data?, URLResponse?, Error?)->()) {
-    guard let token = self.token else {
-      return
-    }
-    guard let oAuthToken = token.oAuthToken,
-      let oAuthTokenSecret = token.oAuthTokenSecret else {
+    parameters : [String:String],
+    callback: @escaping (Data?, URLResponse?, Error?)->()) throws {
+
+    try source.withToken() {(token, err) in
+      guard let token = token else {
         return
+      }
+      guard let oAuthToken = token.oAuthToken,
+        let oAuthTokenSecret = token.oAuthTokenSecret else {
+          return
+      }
+      var parameters = parameters
+      parameters["oauth_token"] = oAuthToken
+      Connection.performRequest(
+        method: method,
+        urlString: urlString,
+        parameters: parameters,
+        tokenSecret: oAuthTokenSecret,
+        consumerKey: self.source.consumerKey!,
+        consumerSecret: self.source.consumerSecret!,
+        callback: callback)
     }
-    parameters["oauth_token"] = oAuthToken
-    Connection.performRequest(
-      method: method,
-      urlString: urlString,
-      parameters: &parameters,
-      tokenSecret: oAuthTokenSecret,
-      consumerKey: provider.consumerKey!,
-      consumerSecret: provider.consumerSecret!,
-      callback: callback)
   }
 
   public func performRequest(
     method : String,
     urlString : String,
-    callback: @escaping (Data?, URLResponse?, Error?)->()) {
+    callback: @escaping (Data?, URLResponse?, Error?)->()) throws {
     var parameters : [String:String] = [:]
-    self.performRequest(method:method, urlString:urlString, parameters:&parameters, callback:callback)
+    try self.performRequest(method:method, urlString:urlString, parameters:parameters, callback:callback)
   }
   
 }

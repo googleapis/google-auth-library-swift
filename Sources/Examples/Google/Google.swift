@@ -19,19 +19,19 @@ import OAuth2
 class GoogleSession {
   var connection : Connection
 
-  init(tokenProvider: TokenProvider) throws{
-    connection = try Connection(provider:tokenProvider)
+  init(tokenSource: TokenSource) throws{
+    connection = try Connection(source:tokenSource)
   }
 
   func getMe() throws {
     let sem = DispatchSemaphore(value: 0)
 
-    var parameters = ["requestMask.includeField": "person.names,person.photos"]
+    let parameters = ["requestMask.includeField": "person.names,person.photos"]
     var responseData : Data?
-    connection.performRequest(
+    try connection.performRequest(
       method:"GET",
       urlString:"https://people.googleapis.com/v1/people/me",
-      parameters: &parameters,
+      parameters: parameters,
       body: nil) {(data, response, error) in
         responseData = data
         sem.signal()
@@ -46,11 +46,11 @@ class GoogleSession {
   func getPeople() throws {
     let sem = DispatchSemaphore(value: 0)
     var responseData : Data?
-    var parameters = ["requestMask.includeField": "person.names,person.photos"]
-    connection.performRequest(
+    let parameters = ["requestMask.includeField": "person.names,person.photos"]
+    try connection.performRequest(
       method:"GET",
       urlString:"https://people.googleapis.com/v1/people/me/connections",
-      parameters: &parameters,
+      parameters: parameters,
       body:nil) {(data, response, error) in
         responseData = data
         sem.signal()
@@ -65,13 +65,13 @@ class GoogleSession {
   func getData() throws {
     let sem = DispatchSemaphore(value: 0)
     var responseData : Data?
-    var parameters : [String:String] = [:]
+    let parameters : [String:String] = [:]
     let postJSON = ["gqlQuery":["queryString":"select *"]]
     let postData = try JSONSerialization.data(withJSONObject:postJSON)
-    connection.performRequest(
+    try connection.performRequest(
       method:"POST",
       urlString:"https://datastore.googleapis.com/v1/projects/hello-86:runQuery",
-      parameters: &parameters,
+      parameters: parameters,
       body: postData) {(data, response, error) in
         responseData = data
         sem.signal()
@@ -93,13 +93,13 @@ class GoogleSession {
   func translate(_ input:String) throws {
     let sem = DispatchSemaphore(value: 0)
     var responseData : Data?
-    var parameters : [String:String] = [:]
+    let parameters : [String:String] = [:]
     let postJSON = ["q":input, "source":"en", "target":"es", "format":"text"]
     let postData = try JSONSerialization.data(withJSONObject:postJSON)
-    connection.performRequest(
+    try connection.performRequest(
       method:"POST",
       urlString:"https://translation.googleapis.com/language/translate/v2",
-      parameters: &parameters,
+      parameters: parameters,
       body: postData) {(data, response, error) in
         responseData = data
         sem.signal()

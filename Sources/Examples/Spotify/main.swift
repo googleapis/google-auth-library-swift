@@ -13,10 +13,10 @@
 // limitations under the License.
 
 import Foundation
-import OAuth1
+import OAuth2
 
-let CREDENTIALS = "twitter.yaml"
-let TOKEN = "twitter.json"
+let CREDENTIALS = "spotify.yaml"
+let TOKEN = "spotify.json"
 
 func main() throws {
   let arguments = CommandLine.arguments
@@ -26,17 +26,27 @@ func main() throws {
     return
   }
 
-  let tokenProvider = try BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)
+  let tokenSource = try BrowserTokenSource(credentials:CREDENTIALS, token:TOKEN)
 
-  let twitter = try TwitterSession(tokenProvider:tokenProvider)
+  let spotify = try SpotifySession(tokenSource:tokenSource)
 
   if arguments[1] == "login" {
-    try tokenProvider.signIn()
-    try tokenProvider.saveToken(TOKEN)
+    try tokenSource.signIn(scopes:["playlist-read-private",
+                                     "playlist-modify-public",
+                                     "playlist-modify-private",
+                                     "user-library-read",
+                                     "user-library-modify",
+                                     "user-read-private",
+                                     "user-read-email"])
+    try tokenSource.saveToken(TOKEN)
   }
 
-  if arguments[1] == "tweets" {
-    try twitter.getTweets()
+  if arguments[1] == "me" {
+    try spotify.getUser()
+  }
+
+  if arguments[1] == "tracks" {
+    try spotify.getTracks()
   }
 }
 

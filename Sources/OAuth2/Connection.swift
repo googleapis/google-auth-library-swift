@@ -19,16 +19,16 @@ import Kitura
 import CryptoSwift
 
 public class Connection {
-  public var provider: TokenProvider
+  public var source: TokenSource
 
-  public init(provider: TokenProvider) throws {
-    self.provider = provider
+  public init(source: TokenSource) throws {
+    self.source = source
   }
 
   public class func performRequest(
     method: String,
     urlString: String,
-    parameters: inout [String: String],
+    parameters: [String: String],
     body: Data!,
     authorization: String,
     callback: @escaping (Data?, URLResponse?, Error?) -> Void) {
@@ -68,35 +68,37 @@ public class Connection {
   public func performRequest(
     method: String,
     urlString: String,
-    parameters: inout [String: String],
+    parameters: [String: String],
     body: Data!,
     callback: @escaping (Data?, URLResponse?, Error?) -> Void) {
 
-    guard let token = provider.token else {
-      return
+    try! source.withToken {token, err in
+      guard let token = token else {
+        return
+      }
+      guard let accessToken = token.AccessToken else {
+        return
+      }
+      Connection.performRequest(
+        method: method,
+        urlString: urlString,
+        parameters: parameters,
+        body: body,
+        authorization: "Bearer " + accessToken,
+        callback: callback)
     }
-    guard let accessToken = token.AccessToken else {
-      return
-    }
-    Connection.performRequest(
-      method: method,
-      urlString: urlString,
-      parameters: &parameters,
-      body: body,
-      authorization: "Bearer " + accessToken,
-      callback: callback)
   }
-
+  
   public func performRequest(
     method: String,
     urlString: String,
     callback: @escaping (Data?, URLResponse?, Error?) -> Void) {
 
-    var parameters: [String: String] = [:]
+    let parameters: [String: String] = [:]
     performRequest(
       method: method,
       urlString: urlString,
-      parameters: &parameters,
+      parameters: parameters,
       body: nil,
       callback: callback)
   }

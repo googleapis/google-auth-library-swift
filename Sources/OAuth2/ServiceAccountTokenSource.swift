@@ -39,7 +39,9 @@ struct ServiceAccountCredentials : Codable {
   }
 }
 
-public class ServiceAccountTokenProvider {
+public class ServiceAccountTokenSource : TokenSource {
+  public var token: Token?
+  
   var credentials : ServiceAccountCredentials
   var rsaKey : RSAKey
 
@@ -62,7 +64,7 @@ public class ServiceAccountTokenProvider {
     self.rsaKey = rsaKey
   }
 
-  public func fetchToken(callback:@escaping (Token?, Error?) -> Void) throws {
+  public func withToken(_ callback:@escaping (Token?, Error?) -> Void) throws {
     let iat = Date()
     let exp = iat.addingTimeInterval(3600)
     let jwtClaimSet = JWTClaimSet(Issuer:credentials.ClientEmail,

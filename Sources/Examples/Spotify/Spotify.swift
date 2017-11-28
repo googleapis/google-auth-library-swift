@@ -14,21 +14,38 @@
 
 import Foundation
 import Dispatch
-import OAuth1
+import OAuth2
 
-class TwitterSession {
-  public var connection : Connection
+class SpotifySession {
 
-  init(tokenProvider: TokenProvider) throws{
-    connection = try Connection(provider:tokenProvider)
+  var connection : Connection
+
+  init(tokenSource: TokenSource) throws{
+    connection = try Connection(source:tokenSource)
   }
 
-  func getTweets() throws {
+  func getUser() throws {
     let sem = DispatchSemaphore(value: 0)
     var responseData : Data?
     connection.performRequest(
       method:"GET",
-      urlString:"https://api.twitter.com/1.1/statuses/user_timeline.json") {(data, response, error) in
+      urlString:"https://api.spotify.com/v1/me") {(data, response, error) in
+        responseData = data
+        sem.signal()
+    }
+    _ = sem.wait(timeout: DispatchTime.distantFuture)
+    if let data = responseData {
+      let response = String(data: data, encoding: .utf8)!
+      print(response)
+    }
+  }
+
+  func getTracks() throws {
+    let sem = DispatchSemaphore(value: 0)
+    var responseData : Data?
+    connection.performRequest(
+      method:"GET",
+      urlString:"https://api.spotify.com/v1/me/tracks") {(data, response, error) in
         responseData = data
         sem.signal()
     }

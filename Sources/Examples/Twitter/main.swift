@@ -13,10 +13,10 @@
 // limitations under the License.
 
 import Foundation
-import OAuth2
+import OAuth1
 
-let CREDENTIALS = "github.yaml"
-let TOKEN = "github.json"
+let CREDENTIALS = "twitter.yaml"
+let TOKEN = "twitter.json"
 
 func main() throws {
   let arguments = CommandLine.arguments
@@ -26,17 +26,17 @@ func main() throws {
     return
   }
 
-  let tokenProvider = try BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)
+  let tokenSource = try BrowserTokenSource(credentials:CREDENTIALS, token:TOKEN)
 
-  let github = try GitHubSession(tokenProvider:tokenProvider)
+  let twitter = try TwitterSession(tokenSource:tokenSource)
 
   if arguments[1] == "login" {
-    try tokenProvider.signIn(scopes:["user"])
-    try tokenProvider.saveToken(TOKEN)
+    try tokenSource.signIn()
+    try tokenSource.saveToken(TOKEN)
   }
 
-  if arguments[1] == "me" {
-    try github.getMe()
+  if arguments[1] == "tweets" {
+    try twitter.getTweets()
   }
 }
 

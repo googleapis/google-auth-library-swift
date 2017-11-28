@@ -15,26 +15,34 @@
 import Foundation
 import OAuth2
 
-let CREDENTIALS = "credentials.json"
+let CREDENTIALS = "github.yaml"
+let TOKEN = "github.json"
 
 func main() throws {
-  if let provider = ServiceAccountTokenProvider(credentialsFileName:CREDENTIALS) {
-    let sem = DispatchSemaphore(value: 0)
-    try provider.fetchToken() {(token, error) -> Void in
-      if let token = token {
-        let encoder = JSONEncoder()
-        let token = try! encoder.encode(token)
-        print("\(String(data:token, encoding:.utf8)!)")
-      }
-      if let error = error {
-        print("ERROR \(error)")
-      }
-      sem.signal()
-    }
-    _ = sem.wait(timeout: DispatchTime.distantFuture)
+  let arguments = CommandLine.arguments
+
+  if arguments.count == 1 {
+    print("Usage: \(arguments[0]) [options]")
+    return
+  }
+
+  let tokenSource = try BrowserTokenSource(credentials:CREDENTIALS, token:TOKEN)
+
+  let github = try GitHubSession(tokenSource:tokenSource)
+
+  if arguments[1] == "login" {
+    try tokenSource.signIn(scopes:["user"])
+    try tokenSource.saveToken(TOKEN)
+  }
+
+  if arguments[1] == "me" {
+    try github.getMe()
   }
 }
 
-try main()
-
+do {
+  try main()
+} catch (let error) {
+  print("ERROR: \(error)")
+}
 

@@ -15,7 +15,10 @@
 import Foundation
 import Dispatch
 
-public class GoogleTokenProvider: TokenProvider {
+public class GoogleTokenSource: TokenSource {
+  public func withToken(_ callback: @escaping (Token?, Error?) -> Void) throws {
+    
+  }
 
   public var token: Token?
 

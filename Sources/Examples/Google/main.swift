@@ -15,8 +15,8 @@
 import Foundation
 import OAuth2
 
-let CREDENTIALS = "spotify.yaml"
-let TOKEN = "spotify.json"
+let CREDENTIALS = "google.yaml"
+let TOKEN = "google.json"
 
 func main() throws {
   let arguments = CommandLine.arguments
@@ -26,27 +26,36 @@ func main() throws {
     return
   }
 
-  let tokenProvider = try BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)
+  #if os(OSX)
+    let tokenSource = try BrowserTokenSource(credentials:CREDENTIALS, token:TOKEN)
+  #else
+    let tokenSource = try GoogleTokenSource()
+  #endif
 
-  let spotify = try SpotifySession(tokenProvider:tokenProvider)
+  let google = try GoogleSession(tokenSource:tokenSource)
 
   if arguments[1] == "login" {
-    try tokenProvider.signIn(scopes:["playlist-read-private",
-                                     "playlist-modify-public",
-                                     "playlist-modify-private",
-                                     "user-library-read",
-                                     "user-library-modify",
-                                     "user-read-private",
-                                     "user-read-email"])
-    try tokenProvider.saveToken(TOKEN)
+    #if os(OSX)
+      try tokenSource.signIn(scopes:["profile", "https://www.googleapis.com/auth/contacts.readonly", "https://www.googleapis.com/auth/cloud-platform"])
+      try tokenSource.saveToken(TOKEN)
+    #endif
   }
 
   if arguments[1] == "me" {
-    try spotify.getUser()
+    try google.getMe()
   }
 
-  if arguments[1] == "tracks" {
-    try spotify.getTracks()
+  if arguments[1] == "people" {
+    try google.getPeople()
+  }
+
+  if arguments[1] == "data" {
+    try google.getData()
+  }
+
+  if arguments[1] == "translate" && arguments.count > 2 {
+    let text = arguments[2]
+    try google.translate(text)
   }
 }
 

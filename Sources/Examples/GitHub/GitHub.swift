@@ -20,8 +20,8 @@ class GitHubSession {
 
   var connection : Connection
 
-  init(tokenProvider: TokenProvider) throws{
-    connection = try Connection(provider:tokenProvider)
+  init(tokenSource: TokenSource) throws{
+    connection = try Connection(source:tokenSource)
   }
 
   func getMe() throws {

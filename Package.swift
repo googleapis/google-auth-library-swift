@@ -1,4 +1,5 @@
-// Copyright 2017 Google Inc. All Rights Reserved.
+// swift-tools-version:4.0
+
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,20 +12,33 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+
 import PackageDescription
 
 let package = Package(
   name: "Auth",
-  targets: [
-    Target(name: "OAuth1"),
-    Target(name: "OAuth2"),
-    Target(name: "TokenProvider", dependencies: ["OAuth2", "OAuth1"]),
-    ],
+  products: [
+    .library(name: "OAuth1", targets: ["OAuth1"]),
+    .library(name: "OAuth2", targets: ["OAuth2"]),
+  ],
   dependencies: [
-    .Package(url: "https://github.com/IBM-Swift/Kitura.git", majorVersion: 1, minor: 7),
-    .Package(url: "https://github.com/behrang/YamlSwift.git", Version(3, 4, 0)),
-    .Package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", majorVersion: 0, minor: 8),
-    .Package(url: "https://github.com/attaswift/BigInt", majorVersion: 3, minor: 0),
-    .Package(url: "https://github.com/timburks/SwiftyBase64", majorVersion: 1, minor: 2),
-    ]
+    .package(url: "https://github.com/IBM-Swift/Kitura.git", from: "2.0.0"),
+    .package(url: "https://github.com/behrang/YamlSwift.git", from: "3.4.0"),
+    .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "0.8.0"),
+    .package(url: "https://github.com/attaswift/BigInt", from: "3.0.0"),
+    .package(url: "https://github.com/timburks/SwiftyBase64", from: "1.2.0"),
+  ],
+  targets: [
+    .target(name: "OAuth1",
+            dependencies: ["CryptoSwift", "Yaml", "Kitura"]),
+    .target(name: "OAuth2",
+            dependencies: ["CryptoSwift", "Yaml", "Kitura", "BigInt", "SwiftyBase64"]),
+    .target(name: "TokenSource", dependencies: ["OAuth2"], path: "Sources/Examples/TokenSource"),
+    .target(name: "Google",      dependencies: ["OAuth2"], path: "Sources/Examples/Google"),
+    .target(name: "GitHub",      dependencies: ["OAuth2"], path: "Sources/Examples/GitHub"),
+    .target(name: "Meetup",      dependencies: ["OAuth2"], path: "Sources/Examples/Meetup"),
+    .target(name: "Spotify",     dependencies: ["OAuth2"], path: "Sources/Examples/Spotify"),
+    .target(name: "Twitter",     dependencies: ["OAuth1"], path: "Sources/Examples/Twitter"),
+  ]
 )
