@@ -15,7 +15,6 @@
 import Foundation
 import Dispatch
 import Yaml
-import Kitura
 import CryptoSwift
 
 public class Connection {
