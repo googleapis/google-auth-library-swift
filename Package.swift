@@ -23,7 +23,7 @@ let package = Package(
     .library(name: "OAuth2", targets: ["OAuth2"]),
   ],
   dependencies: [
-    .package(url: "https://github.com/IBM-Swift/Kitura.git", from: "2.0.0"),
+    .package(url: "https://github.com/swift-server/http", from: "0.1.0"),
     .package(url: "https://github.com/behrang/YamlSwift.git", from: "3.4.0"),
     .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "0.8.0"),
     .package(url: "https://github.com/attaswift/BigInt", from: "3.0.0"),
@@ -31,9 +31,9 @@ let package = Package(
   ],
   targets: [
     .target(name: "OAuth1",
-            dependencies: ["CryptoSwift", "Yaml", "Kitura"]),
+            dependencies: ["CryptoSwift", "Yaml", "HTTP"]),
     .target(name: "OAuth2",
-            dependencies: ["CryptoSwift", "Yaml", "Kitura", "BigInt", "SwiftyBase64"]),
+            dependencies: ["CryptoSwift", "Yaml", "HTTP", "BigInt", "SwiftyBase64"]),
     .target(name: "TokenSource", dependencies: ["OAuth2"], path: "Sources/Examples/TokenSource"),
     .target(name: "Google",      dependencies: ["OAuth2"], path: "Sources/Examples/Google"),
     .target(name: "GitHub",      dependencies: ["OAuth2"], path: "Sources/Examples/GitHub"),

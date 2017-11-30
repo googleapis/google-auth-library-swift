@@ -15,7 +15,7 @@
 import Foundation
 import Dispatch
 import Yaml
-import Kitura
+import HTTP
 import CryptoSwift
 
 struct AuthError : Error {
@@ -35,6 +35,8 @@ public class BrowserTokenProvider: TokenProvider {
   private var clientSecret: String?
   private var code: Code?
   public var token: Token?
+
+  private var sem: DispatchSemaphore?
 
   public init(credentials: String, token tokenfile: String) throws {
     let path = ProcessInfo.processInfo.environment["HOME"]!
@@ -90,34 +92,28 @@ public class BrowserTokenProvider: TokenProvider {
     }
   }
 
+func hello(request: HTTPRequest, response: HTTPResponseWriter ) -> HTTPBodyProcessing {
+  let urlComponents = URLComponents(string: request.target)!
+  let path = urlComponents.path
+  if path == callback! {
+    print("PATH \(path)")
+    self.code = Code(urlComponents: urlComponents)
+    DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
+      self.sem?.signal()
+    }
+  }
+  response.writeHeader(status: .ok)
+  response.writeBody("Hello, World!\n")
+  response.done()
+  return .discardBody
+}
+
   // StartServer starts a web server that listens on http://localhost:8080.
   // The webserver waits for an oauth code in the three-legged auth flow.
   private func startServer(sem: DispatchSemaphore) {
-    // Create a new router
-    let router = Router()
-
-    // Handle HTTP GET requests to the callback path
-    router.get(callback!) {
-      request, response, next in
-      response.send("Hello!")
-
-      let urlComponents = URLComponents(string: request.originalURL)!
-      self.code = Code(urlComponents: urlComponents)
-      next()
-
-      DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-        Kitura.stop()
-        sem.signal()
-      }
-    }
-
-    // Add an HTTP server and connect it to the router
-    Kitura.addHTTPServer(onPort: 8080, with: router)
-
-    // Start the Kitura runloop on a separate thread
-    DispatchQueue.global().async {
-      Kitura.run()
-    }
+    self.sem = sem
+    let server = HTTPServer()
+    try! server.start(port: 8080, handler: hello)
   }
 
   private func exchange() throws -> Token {
