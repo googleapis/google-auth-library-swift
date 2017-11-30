@@ -32,8 +32,9 @@ web server runs locally on port 8080.
 
 ## Credits
 
-- The local web server is built using the [Kitura](https://github.com/IBM-Swift/Kitura) web framework.
-- HMAC hashing is performed using [CryptoSwift](https://github.com/krzyzanowskim/CryptoSwift).
+- The local web server is built using [swift-server/http](https://github.com/swift-server/http).
+- HMAC and SHA1 hashing is performed using [CryptoSwift](https://github.com/krzyzanowskim/CryptoSwift).
+- RSA signing of service account JWT tokens uses [BigInt](https://github.com/attaswift/BigInt).
 
 ## Disclaimer
 
