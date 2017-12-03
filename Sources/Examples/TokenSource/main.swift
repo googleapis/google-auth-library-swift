@@ -15,27 +15,27 @@
 import Foundation
 import OAuth2
 
-let CREDENTIALS = "/Users/timburks/Desktop/TokenProvider/credentials.json"
+let CREDENTIALS = ".credentials/service_account.json"
 
-func main() throws {
-  if let provider = ServiceAccountTokenProvider(credentialsFileName:CREDENTIALS) {
-    let sem = DispatchSemaphore(value: 0)
-    try provider.withToken() {(token, error) -> Void in
-      if let token = token {
-        let encoder = JSONEncoder()
-        if let token = try? encoder.encode(token) {
-          print("\(String(data:token, encoding:.utf8)!)")
+if #available(OSX 10.12, *) {
+    let homeURL = FileManager.default.homeDirectoryForCurrentUser
+    let credentialsURL = homeURL.appendingPathComponent(CREDENTIALS)
+    if let provider = ServiceAccountTokenProvider(credentialsURL:credentialsURL) {
+        let sem = DispatchSemaphore(value: 0)
+        try provider.withToken() {(token, error) -> Void in
+            if let token = token {
+                let encoder = JSONEncoder()
+                if let token = try? encoder.encode(token) {
+                    print("\(String(data:token, encoding:.utf8)!)")
+                }
+            }
+            if let error = error {
+                print("ERROR \(error)")
+            }
+            sem.signal()
         }
-      }
-      if let error = error {
-        print("ERROR \(error)")
-      }
-      sem.signal()
+        _ = sem.wait(timeout: DispatchTime.distantFuture)
     }
-    _ = sem.wait(timeout: DispatchTime.distantFuture)
-  }
+} else {
+    print("This sample requires OSX 10.12 or later.")
 }
-
-try main()
-
-

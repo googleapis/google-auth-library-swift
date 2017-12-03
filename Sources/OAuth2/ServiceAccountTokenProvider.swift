@@ -15,92 +15,91 @@
 import Foundation
 
 struct ServiceAccountCredentials : Codable {
-  let CredentialType : String
-  let ProjectId: String
-  let PrivateKeyId: String
-  let PrivateKey: String
-  let ClientEmail: String
-  let ClientID: String
-  let AuthURI: String
-  let TokenURI: String
-  let AuthProviderX509CertURL: String
-  let ClientX509CertURL: String
-  enum CodingKeys: String, CodingKey {
-    case CredentialType = "type"
-    case ProjectId = "project_id"
-    case PrivateKeyId = "private_key_id"
-    case PrivateKey = "private_key"
-    case ClientEmail = "client_email"
-    case ClientID = "client_id"
-    case AuthURI = "auth_uri"
-    case TokenURI = "token_uri"
-    case AuthProviderX509CertURL = "auth_provider_x509_cert_url"
-    case ClientX509CertURL = "client_x509_cert_url"
-  }
+    let CredentialType : String
+    let ProjectId: String
+    let PrivateKeyId: String
+    let PrivateKey: String
+    let ClientEmail: String
+    let ClientID: String
+    let AuthURI: String
+    let TokenURI: String
+    let AuthProviderX509CertURL: String
+    let ClientX509CertURL: String
+    enum CodingKeys: String, CodingKey {
+        case CredentialType = "type"
+        case ProjectId = "project_id"
+        case PrivateKeyId = "private_key_id"
+        case PrivateKey = "private_key"
+        case ClientEmail = "client_email"
+        case ClientID = "client_id"
+        case AuthURI = "auth_uri"
+        case TokenURI = "token_uri"
+        case AuthProviderX509CertURL = "auth_provider_x509_cert_url"
+        case ClientX509CertURL = "client_x509_cert_url"
+    }
 }
 
 public class ServiceAccountTokenProvider : TokenProvider {
-  public var token: Token?
-  
-  var credentials : ServiceAccountCredentials
-  var rsaKey : RSAKey
-
-  public init?(credentialsFileName : String) {
-    let credentialsURL = URL(fileURLWithPath:credentialsFileName)
-    guard let credentialsData = try? Data(contentsOf:credentialsURL, options:[]) else {
-      return nil
+    public var token: Token?
+    
+    var credentials : ServiceAccountCredentials
+    var rsaKey : RSAKey
+    
+    public init?(credentialsURL : URL) {
+        guard let credentialsData = try? Data(contentsOf:credentialsURL, options:[]) else {
+            return nil
+        }
+        let decoder = JSONDecoder()
+        guard let credentials = try? decoder.decode(ServiceAccountCredentials.self,
+                                                    from: credentialsData)
+            else {
+                return nil
+        }
+        self.credentials = credentials
+        guard let rsaKey = RSAKey(privateKey:credentials.PrivateKey)
+            else {
+                return nil
+        }
+        self.rsaKey = rsaKey
     }
-    let decoder = JSONDecoder()
-    guard let credentials = try? decoder.decode(ServiceAccountCredentials.self,
-                                                from: credentialsData)
-      else {
-        return nil
+    
+    public func withToken(_ callback:@escaping (Token?, Error?) -> Void) throws {
+        let iat = Date()
+        let exp = iat.addingTimeInterval(3600)
+        let jwtClaimSet = JWTClaimSet(Issuer:credentials.ClientEmail,
+                                      Audience:credentials.TokenURI,
+                                      Scope: "https://www.googleapis.com/auth/cloud-platform",
+                                      IssuedAt: Int(iat.timeIntervalSince1970),
+                                      Expiration: Int(exp.timeIntervalSince1970))
+        let jwtHeader = JWTHeader(Algorithm: "RS256",
+                                  Format: "JWT")
+        let msg = try JWT.encodeWithRS256(jwtHeader:jwtHeader,
+                                          jwtClaimSet:jwtClaimSet,
+                                          rsaKey:rsaKey)
+        var urlComponents = URLComponents(string:"")!
+        urlComponents.queryItems =
+            [URLQueryItem(name:"grant_type",
+                          value:"urn:ietf:params:oauth:grant-type:jwt-bearer"),
+             URLQueryItem(name:"assertion",
+                          value:msg)]
+        let query = urlComponents.percentEncodedQuery!
+        
+        var urlRequest = URLRequest(url:URL(string:credentials.TokenURI)!)
+        urlRequest.httpMethod = "POST"
+        urlRequest.httpBody = query.data(using:.utf8)
+        urlRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField:"Content-Type")
+        
+        let session = URLSession(configuration: URLSessionConfiguration.default)
+        let task: URLSessionDataTask = session.dataTask(with:urlRequest)
+        {(data, response, error) -> Void in
+            let decoder = JSONDecoder()
+            if let data = data,
+                let token = try? decoder.decode(Token.self, from: data) {
+                callback(token, error)
+            } else {
+                callback(nil, error)
+            }
+        }
+        task.resume()
     }
-    self.credentials = credentials
-    guard let rsaKey = RSAKey(privateKey:credentials.PrivateKey)
-      else {
-        return nil
-    }
-    self.rsaKey = rsaKey
-  }
-
-  public func withToken(_ callback:@escaping (Token?, Error?) -> Void) throws {
-    let iat = Date()
-    let exp = iat.addingTimeInterval(3600)
-    let jwtClaimSet = JWTClaimSet(Issuer:credentials.ClientEmail,
-                                  Audience:credentials.TokenURI,
-                                  Scope: "https://www.googleapis.com/auth/cloud-platform",
-                                  IssuedAt: Int(iat.timeIntervalSince1970),
-                                  Expiration: Int(exp.timeIntervalSince1970))
-    let jwtHeader = JWTHeader(Algorithm: "RS256",
-                              Format: "JWT")
-    let msg = try JWT.encodeWithRS256(jwtHeader:jwtHeader,
-                                      jwtClaimSet:jwtClaimSet,
-                                      rsaKey:rsaKey)
-    var urlComponents = URLComponents(string:"")!
-    urlComponents.queryItems =
-      [URLQueryItem(name:"grant_type",
-                    value:"urn:ietf:params:oauth:grant-type:jwt-bearer"),
-       URLQueryItem(name:"assertion",
-                    value:msg)]
-    let query = urlComponents.percentEncodedQuery!
-
-    var urlRequest = URLRequest(url:URL(string:credentials.TokenURI)!)
-    urlRequest.httpMethod = "POST"
-    urlRequest.httpBody = query.data(using:.utf8)
-    urlRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField:"Content-Type")
-
-    let session = URLSession(configuration: URLSessionConfiguration.default)
-    let task: URLSessionDataTask = session.dataTask(with:urlRequest)
-    {(data, response, error) -> Void in
-      let decoder = JSONDecoder()
-      if let data = data,
-        let token = try? decoder.decode(Token.self, from: data) {
-        callback(token, error)
-      } else {
-        callback(nil, error)
-      }
-    }
-    task.resume()
-  }
 }
