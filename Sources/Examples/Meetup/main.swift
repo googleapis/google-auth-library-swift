@@ -15,7 +15,7 @@
 import Foundation
 import OAuth2
 
-let CREDENTIALS = "meetup.yaml"
+let CREDENTIALS = "meetup.json"
 let TOKEN = "meetup.json"
 
 func main() throws {
@@ -26,7 +26,7 @@ func main() throws {
     return
   }
 
-  let tokenProvider = try BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)
+  let tokenProvider = try BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)!
 
   let meetup = try MeetupSession(tokenProvider:tokenProvider)
 

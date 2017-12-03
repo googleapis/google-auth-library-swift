@@ -14,7 +14,6 @@
 
 import Foundation
 import Dispatch
-import Yaml
 import CryptoSwift
 
 public class Connection {
@@ -112,7 +111,7 @@ public class Connection {
     parameters : [String:String],
     callback: @escaping (Data?, URLResponse?, Error?)->()) throws {
 
-    try provider.withToken() {(token, err) in
+    try provider.withToken() {(token, consumerKey, consumerSecret, err) in
       guard let token = token else {
         return
       }
@@ -127,8 +126,8 @@ public class Connection {
         urlString: urlString,
         parameters: parameters,
         tokenSecret: oAuthTokenSecret,
-        consumerKey: self.provider.consumerKey!,
-        consumerSecret: self.provider.consumerSecret!,
+        consumerKey: consumerKey!,
+        consumerSecret: consumerSecret!,
         callback: callback)
     }
   }
@@ -137,7 +136,7 @@ public class Connection {
     method : String,
     urlString : String,
     callback: @escaping (Data?, URLResponse?, Error?)->()) throws {
-    var parameters : [String:String] = [:]
+    let parameters : [String:String] = [:]
     try self.performRequest(method:method, urlString:urlString, parameters:parameters, callback:callback)
   }
   

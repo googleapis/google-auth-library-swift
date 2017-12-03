@@ -14,7 +14,6 @@
 
 import Foundation
 import Dispatch
-import Yaml
 import CryptoSwift
 
 public class Connection {

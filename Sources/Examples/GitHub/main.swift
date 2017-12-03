@@ -15,7 +15,7 @@
 import Foundation
 import OAuth2
 
-let CREDENTIALS = "github.yaml"
+let CREDENTIALS = "github.json"
 let TOKEN = "github.json"
 
 func main() throws {
@@ -26,7 +26,7 @@ func main() throws {
     return
   }
 
-  let tokenProvider = try BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)
+  let tokenProvider = try BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)!
 
   let github = try GitHubSession(tokenProvider:tokenProvider)
 

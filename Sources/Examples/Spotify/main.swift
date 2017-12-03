@@ -15,7 +15,7 @@
 import Foundation
 import OAuth2
 
-let CREDENTIALS = "spotify.yaml"
+let CREDENTIALS = "spotify.json"
 let TOKEN = "spotify.json"
 
 func main() throws {
@@ -26,7 +26,7 @@ func main() throws {
     return
   }
 
-  let tokenProvider = try BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)
+  let tokenProvider = try BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)!
 
   let spotify = try SpotifySession(tokenProvider:tokenProvider)
 

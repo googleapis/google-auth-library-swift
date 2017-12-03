@@ -15,7 +15,7 @@
 import Foundation
 import OAuth1
 
-let CREDENTIALS = "twitter.yaml"
+let CREDENTIALS = "twitter.json"
 let TOKEN = "twitter.json"
 
 func main() throws {
@@ -26,7 +26,7 @@ func main() throws {
     return
   }
 
-  let tokenProvider = try BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)
+  let tokenProvider = try BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)!
 
   let twitter = try TwitterSession(tokenProvider:tokenProvider)
 

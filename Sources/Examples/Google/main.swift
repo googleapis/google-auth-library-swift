@@ -15,7 +15,7 @@
 import Foundation
 import OAuth2
 
-let CREDENTIALS = "google.yaml"
+let CREDENTIALS = "google.json"
 let TOKEN = "google.json"
 
 func main() throws {
@@ -27,7 +27,7 @@ func main() throws {
   }
 
   #if os(OSX)
-    let tokenProvider = try BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)
+    let tokenProvider = try BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)!
   #else
     let tokenProvider = try GoogleCloudMetadataTokenProvider()
   #endif

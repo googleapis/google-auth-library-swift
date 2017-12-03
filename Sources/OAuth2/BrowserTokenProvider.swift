@@ -14,62 +14,49 @@
 
 import Foundation
 import Dispatch
-import Yaml
 import HTTP
-import CryptoSwift
+
+struct Credentials : Codable {
+  let clientID : String
+  let clientSecret : String
+  let authorizeURL : String
+  let accessTokenURL : String
+  let callback : String
+  enum CodingKeys: String, CodingKey {
+    case clientID = "client_id"
+    case clientSecret = "client_secret"
+    case authorizeURL = "authorize_url"
+    case accessTokenURL = "access_token_url"
+    case callback = "callback"
+  }
+}
 
 struct AuthError : Error {
 
 }
 
 public class BrowserTokenProvider: TokenProvider {
-  
-  public func withToken(_ callback: @escaping (Token?, Error?) -> Void) throws {
-    callback(token, nil)
-  }
-
-  private var authorizeURL: String?
-  private var accessTokenURL: String?
-  private var callback: String?
-  private var clientID: String?
-  private var clientSecret: String?
+  private var credentials : Credentials
   private var code: Code?
   public var token: Token?
 
   private var sem: DispatchSemaphore?
 
-  public init(credentials: String, token tokenfile: String) throws {
+  public init?(credentials: String, token tokenfile: String) throws {
     let path = ProcessInfo.processInfo.environment["HOME"]!
       + "/.credentials/" + credentials
-    let data = try String(contentsOfFile: path, encoding: .utf8)
-    let yaml = try Yaml.load(data)
-    switch yaml {
-    case let .dictionary(d):
-      for (key, value) in d {
-        switch key {
-        case let .string(k):
-          if let v = value.string {
-            switch k {
-            case "authorize_url":
-              authorizeURL = v
-            case "access_token_url":
-              accessTokenURL = v
-            case "callback":
-              callback = v
-            case "client_id":
-              clientID = v
-            case "client_secret":
-              clientSecret = v
-            case "access_token_url":
-              accessTokenURL = v
-            default: break
-            }
-          }
-        default: break
-        }
-      }
-    default: break
+    let url = URL(fileURLWithPath:path)
+
+    guard let credentialsData = try? Data(contentsOf:url) else {
+      return nil
     }
+    let decoder = JSONDecoder()
+    guard let credentials = try? decoder.decode(Credentials.self,
+                                                from: credentialsData)
+      else {
+        return nil
+    }
+    self.credentials = credentials
 
     if tokenfile != "" {
       do {
@@ -92,21 +79,21 @@ public class BrowserTokenProvider: TokenProvider {
     }
   }
 
-func hello(request: HTTPRequest, response: HTTPResponseWriter ) -> HTTPBodyProcessing {
-  let urlComponents = URLComponents(string: request.target)!
-  let path = urlComponents.path
-  if path == callback! {
-    print("PATH \(path)")
-    self.code = Code(urlComponents: urlComponents)
-    DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
-      self.sem?.signal()
+  func hello(request: HTTPRequest, response: HTTPResponseWriter ) -> HTTPBodyProcessing {
+    let urlComponents = URLComponents(string: request.target)!
+    let path = urlComponents.path
+    if path == credentials.callback {
+      print("PATH \(path)")
+      self.code = Code(urlComponents: urlComponents)
+      DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
+        self.sem?.signal()
+      }
     }
+    response.writeHeader(status: .ok)
+    response.writeBody("Hello, World!\n")
+    response.done()
+    return .discardBody
   }
-  response.writeHeader(status: .ok)
-  response.writeBody("Hello, World!\n")
-  response.done()
-  return .discardBody
-}
 
   // StartServer starts a web server that listens on http://localhost:8080.
   // The webserver waits for an oauth code in the three-legged auth flow.
@@ -119,20 +106,20 @@ func hello(request: HTTPRequest, response: HTTPResponseWriter ) -> HTTPBodyProce
   private func exchange() throws -> Token {
     let sem = DispatchSemaphore(value: 0)
     let parameters = [
-      "client_id": clientID!, // some providers require the client id and secret in the method call
-      "client_secret": clientSecret!,
+      "client_id": credentials.clientID, // some providers require the client id and secret in the method call
+      "client_secret": credentials.clientSecret,
       "grant_type": "authorization_code",
       "code": code!.code!,
-      "redirect_uri": "http://localhost:8080" + callback!,
+      "redirect_uri": "http://localhost:8080" + credentials.callback,
       ]
-    let token = clientID! + ":" + clientSecret!
+    let token = credentials.clientID + ":" + credentials.clientSecret
     // some providers require the client id and secret in the authorization header
     let authorization = "Basic " + String(data: token.data(using: .utf8)!.base64EncodedData(), encoding: .utf8)!
     var responseData: Data?
     var contentType: String?
     Connection.performRequest(
       method: "POST",
-      urlString: accessTokenURL!,
+      urlString: credentials.accessTokenURL,
       parameters: parameters,
       body: nil,
       authorization: authorization) { data, response, _ in
@@ -161,11 +148,11 @@ func hello(request: HTTPRequest, response: HTTPResponseWriter ) -> HTTPBodyProce
     let state = UUID().uuidString
     let scope = scopes.joined(separator: " ")
 
-    var urlComponents = URLComponents(string: authorizeURL!)!
+    var urlComponents = URLComponents(string: credentials.authorizeURL)!
     urlComponents.queryItems = [
-      URLQueryItem(name: "client_id", value: clientID!),
+      URLQueryItem(name: "client_id", value: credentials.clientID),
       URLQueryItem(name: "response_type", value: "code"),
-      URLQueryItem(name: "redirect_uri", value: "http://localhost:8080" + callback!),
+      URLQueryItem(name: "redirect_uri", value: "http://localhost:8080" + credentials.callback),
       URLQueryItem(name: "state", value: state),
       URLQueryItem(name: "scope", value: scope),
       URLQueryItem(name: "show_dialog", value: "false"),
@@ -173,5 +160,9 @@ func hello(request: HTTPRequest, response: HTTPResponseWriter ) -> HTTPBodyProce
     openURL(urlComponents.url!)
     _ = sem.wait(timeout: DispatchTime.distantFuture)
     token = try exchange()
+  }
+
+  public func withToken(_ callback: @escaping (Token?, Error?) -> Void) throws {
+    callback(token, nil)
   }
 }
