@@ -27,7 +27,7 @@ class GitHubSession {
   func getMe() throws {
     let sem = DispatchSemaphore(value: 0)
     var responseData : Data?
-    connection.performRequest(
+    try connection.performRequest(
       method:"GET",
       urlString:"https://api.github.com/user") {(data, response, error) in
         responseData = data

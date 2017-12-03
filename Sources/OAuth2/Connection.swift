@@ -68,9 +68,9 @@ public class Connection {
     urlString: String,
     parameters: [String: String],
     body: Data!,
-    callback: @escaping (Data?, URLResponse?, Error?) -> Void) {
+    callback: @escaping (Data?, URLResponse?, Error?) -> Void) throws {
 
-    try! provider.withToken {token, err in
+    try provider.withToken {token, err in
       guard let token = token else {
         return
       }
@@ -90,10 +90,10 @@ public class Connection {
   public func performRequest(
     method: String,
     urlString: String,
-    callback: @escaping (Data?, URLResponse?, Error?) -> Void) {
+    callback: @escaping (Data?, URLResponse?, Error?) -> Void) throws {
 
     let parameters: [String: String] = [:]
-    performRequest(
+    try performRequest(
       method: method,
       urlString: urlString,
       parameters: parameters,
