@@ -79,20 +79,24 @@ public class BrowserTokenProvider: TokenProvider {
     }
   }
 
-  func hello(request: HTTPRequest, response: HTTPResponseWriter ) -> HTTPBodyProcessing {
+  func handler(request: HTTPRequest, response: HTTPResponseWriter ) -> HTTPBodyProcessing {
     let urlComponents = URLComponents(string: request.target)!
     let path = urlComponents.path
     if path == credentials.callback {
-      print("PATH \(path)")
       self.code = Code(urlComponents: urlComponents)
       DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
         self.sem?.signal()
       }
+      response.writeHeader(status: .ok)
+      response.writeBody("Success! Token received.\n")
+      response.done()
+      return .discardBody
+    } else {
+      response.writeHeader(status: .ok)
+      response.writeBody("Unknown request: \(path)\n")
+      response.done()
+      return .discardBody
     }
-    response.writeHeader(status: .ok)
-    response.writeBody("Hello, World!\n")
-    response.done()
-    return .discardBody
   }
 
   // StartServer starts a web server that listens on http://localhost:8080.
@@ -100,7 +104,7 @@ public class BrowserTokenProvider: TokenProvider {
   private func startServer(sem: DispatchSemaphore) {
     self.sem = sem
     let server = HTTPServer()
-    try! server.start(port: 8080, handler: hello)
+    try! server.start(port: 8080, handler: handler)
   }
 
   private func exchange() throws -> Token {
