@@ -35,6 +35,8 @@ if #available(OSX 10.12, *) {
             sem.signal()
         }
         _ = sem.wait(timeout: DispatchTime.distantFuture)
+    } else {
+      print("Unable to read service account credentials from $HOME/\(CREDENTIALS).")
     }
 } else {
     print("This sample requires OSX 10.12 or later.")
