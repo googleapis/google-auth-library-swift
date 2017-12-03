@@ -51,20 +51,14 @@ class MeetupSession {
     }
     _ = sem.wait(timeout: DispatchTime.distantFuture)
     if let data = responseData {
-      //let json = JSON(data: data)
-      //for rsvp in json.array! {
-      //  if let id = rsvp["member"]["id"].number ,
-      //    let name = rsvp["member"]["name"].string,
-      //    let bio = rsvp["member"]["bio"].string {
-      //    print("\(id),\(name),\(bio)")
-      //  }
-      //}
+      let response = String(data: data, encoding: .utf8)!
+      print(response)
     }
   }
 
   func getEvents() throws {
     let sem = DispatchSemaphore(value: 0)
-    var parameters : [String:String] = ["status":"past"]
+    let parameters : [String:String] = ["status":"past"]
     var responseData : Data?
     try connection.performRequest(
       method:"GET",
@@ -76,13 +70,8 @@ class MeetupSession {
     }
     _ = sem.wait(timeout: DispatchTime.distantFuture)
     if let data = responseData {
-      //let json = JSON(data: data)
-      //for event in json.array! {
-      //  if let id = event["id"].string,
-      //    let name = event["name"].string {
-      //    print("\(id),\(name)")
-      //  }
-      //}
+      let response = String(data: data, encoding: .utf8)!
+      print(response)
     }
   }
 }
