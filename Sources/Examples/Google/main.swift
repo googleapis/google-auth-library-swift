@@ -15,7 +15,10 @@
 import Foundation
 import OAuth2
 
-let CREDENTIALS = "google.json"
+let USE_SERVICE_ACCOUNT = false
+let SERVICE_ACCOUNT_CREDENTIALS = ".credentials/service_account.json"
+
+let CLIENT_CREDENTIALS = "google.json"
 let TOKEN = "google.json"
 
 func main() throws {
@@ -26,18 +29,30 @@ func main() throws {
     return
   }
 
+  var tokenProvider : TokenProvider
   #if os(OSX)
-    let tokenProvider = try BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)!
+    tokenProvider = try BrowserTokenProvider(credentials:CLIENT_CREDENTIALS, token:TOKEN)!
   #else
-    let tokenProvider = try GoogleCloudMetadataTokenProvider()
+    tokenProvider = try GoogleCloudMetadataTokenProvider()
   #endif
+
+  if USE_SERVICE_ACCOUNT {
+    if #available(OSX 10.12, *) {
+      let homeURL = FileManager.default.homeDirectoryForCurrentUser
+      let credentialsURL = homeURL.appendingPathComponent(SERVICE_ACCOUNT_CREDENTIALS)
+      tokenProvider = ServiceAccountTokenProvider(credentialsURL:credentialsURL)!
+    } else {
+      print("This sample requires OSX 10.12 or later.")
+    }
+  }
 
   let google = try GoogleSession(tokenProvider:tokenProvider)
 
   if arguments[1] == "login" {
     #if os(OSX)
-      try tokenProvider.signIn(scopes:["profile", "https://www.googleapis.com/auth/contacts.readonly", "https://www.googleapis.com/auth/cloud-platform"])
-      try tokenProvider.saveToken(TOKEN)
+      let browserTokenProvider = tokenProvider as! BrowserTokenProvider
+      try browserTokenProvider.signIn(scopes:["profile", "https://www.googleapis.com/auth/contacts.readonly", "https://www.googleapis.com/auth/cloud-platform"])
+      try browserTokenProvider.saveToken(TOKEN)
     #endif
   }
 
