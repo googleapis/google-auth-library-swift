@@ -14,10 +14,7 @@
 
 import Foundation
 import Dispatch
-import Yaml
-import Kitura
 import CryptoSwift
-import SwiftyJSON
 
 public class Connection {
   public var provider: TokenProvider
@@ -29,7 +26,7 @@ public class Connection {
   public class func performRequest(
     method: String,
     urlString: String,
-    parameters: inout [String: String],
+    parameters: [String: String],
     body: Data!,
     authorization: String,
     callback: @escaping (Data?, URLResponse?, Error?) -> Void) {
@@ -69,35 +66,37 @@ public class Connection {
   public func performRequest(
     method: String,
     urlString: String,
-    parameters: inout [String: String],
+    parameters: [String: String],
     body: Data!,
-    callback: @escaping (Data?, URLResponse?, Error?) -> Void) {
+    callback: @escaping (Data?, URLResponse?, Error?) -> Void) throws {
 
-    guard let token = provider.token else {
-      return
+    try provider.withToken {token, err in
+      guard let token = token else {
+        return
+      }
+      guard let accessToken = token.AccessToken else {
+        return
+      }
+      Connection.performRequest(
+        method: method,
+        urlString: urlString,
+        parameters: parameters,
+        body: body,
+        authorization: "Bearer " + accessToken,
+        callback: callback)
     }
-    guard let accessToken = token.accessToken else {
-      return
-    }
-    Connection.performRequest(
-      method: method,
-      urlString: urlString,
-      parameters: &parameters,
-      body: body,
-      authorization: "Bearer " + accessToken,
-      callback: callback)
   }
-
+  
   public func performRequest(
     method: String,
     urlString: String,
-    callback: @escaping (Data?, URLResponse?, Error?) -> Void) {
+    callback: @escaping (Data?, URLResponse?, Error?) -> Void) throws {
 
-    var parameters: [String: String] = [:]
-    performRequest(
+    let parameters: [String: String] = [:]
+    try performRequest(
       method: method,
       urlString: urlString,
-      parameters: &parameters,
+      parameters: parameters,
       body: nil,
       callback: callback)
   }

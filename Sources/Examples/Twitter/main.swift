@@ -13,10 +13,10 @@
 // limitations under the License.
 
 import Foundation
-import OAuth2
+import OAuth1
 
-let CREDENTIALS = "meetup.yaml"
-let TOKEN = "meetup.json"
+let CREDENTIALS = "twitter.json"
+let TOKEN = "twitter.json"
 
 func main() throws {
   let arguments = CommandLine.arguments
@@ -26,25 +26,17 @@ func main() throws {
     return
   }
 
-  let tokenProvider = try BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)
+  let tokenProvider = try BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)!
 
-  let meetup = try MeetupSession(tokenProvider:tokenProvider)
+  let twitter = try TwitterSession(tokenProvider:tokenProvider)
 
   if arguments[1] == "login" {
-    try tokenProvider.signIn(scopes:["basic", "ageless"])
+    try tokenProvider.signIn()
     try tokenProvider.saveToken(TOKEN)
   }
 
-  if arguments[1] == "me" {
-    try meetup.getMe()
-  }
-
-  if arguments[1] == "rsvps" {
-    try meetup.getRSVPs(eventid:arguments[2])
-  }
-
-  if arguments[1] == "events" {
-    try meetup.getEvents()
+  if arguments[1] == "tweets" {
+    try twitter.getTweets()
   }
 }
 

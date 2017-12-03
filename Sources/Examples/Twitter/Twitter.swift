@@ -14,7 +14,6 @@
 
 import Foundation
 import Dispatch
-import SwiftyJSON
 import OAuth1
 
 class TwitterSession {
@@ -27,7 +26,7 @@ class TwitterSession {
   func getTweets() throws {
     let sem = DispatchSemaphore(value: 0)
     var responseData : Data?
-    connection.performRequest(
+    try connection.performRequest(
       method:"GET",
       urlString:"https://api.twitter.com/1.1/statuses/user_timeline.json") {(data, response, error) in
         responseData = data

@@ -14,10 +14,9 @@
 
 import Foundation
 import Dispatch
-import SwiftyJSON
 import OAuth2
 
-class SpotifySession {
+class MeetupSession {
 
   var connection : Connection
 
@@ -25,12 +24,12 @@ class SpotifySession {
     connection = try Connection(provider:tokenProvider)
   }
 
-  func getUser() throws {
+  func getMe() throws {
     let sem = DispatchSemaphore(value: 0)
     var responseData : Data?
-    connection.performRequest(
+    try connection.performRequest(
       method:"GET",
-      urlString:"https://api.spotify.com/v1/me") {(data, response, error) in
+      urlString:"https://api.meetup.com/dashboard") {(data, response, error) in
         responseData = data
         sem.signal()
     }
@@ -41,12 +40,31 @@ class SpotifySession {
     }
   }
 
-  func getTracks() throws {
+  func getRSVPs(eventid : String) throws {
     let sem = DispatchSemaphore(value: 0)
     var responseData : Data?
-    connection.performRequest(
+    try connection.performRequest(
       method:"GET",
-      urlString:"https://api.spotify.com/v1/me/tracks") {(data, response, error) in
+      urlString:"https://api.meetup.com/sviphone/events/\(eventid)/rsvps") {(data, response, error) in
+        responseData = data
+        sem.signal()
+    }
+    _ = sem.wait(timeout: DispatchTime.distantFuture)
+    if let data = responseData {
+      let response = String(data: data, encoding: .utf8)!
+      print(response)
+    }
+  }
+
+  func getEvents() throws {
+    let sem = DispatchSemaphore(value: 0)
+    let parameters : [String:String] = ["status":"past"]
+    var responseData : Data?
+    try connection.performRequest(
+      method:"GET",
+      urlString:"https://api.meetup.com/sviphone/events",
+      parameters: parameters,
+      body: nil) {(data, response, error) in
         responseData = data
         sem.signal()
     }

@@ -14,10 +14,9 @@
 
 import Foundation
 import Dispatch
-import SwiftyJSON
 import OAuth2
 
-class GitHubSession {
+class SpotifySession {
 
   var connection : Connection
 
@@ -25,12 +24,28 @@ class GitHubSession {
     connection = try Connection(provider:tokenProvider)
   }
 
-  func getMe() throws {
+  func getUser() throws {
     let sem = DispatchSemaphore(value: 0)
     var responseData : Data?
-    connection.performRequest(
+    try connection.performRequest(
       method:"GET",
-      urlString:"https://api.github.com/user") {(data, response, error) in
+      urlString:"https://api.spotify.com/v1/me") {(data, response, error) in
+        responseData = data
+        sem.signal()
+    }
+    _ = sem.wait(timeout: DispatchTime.distantFuture)
+    if let data = responseData {
+      let response = String(data: data, encoding: .utf8)!
+      print(response)
+    }
+  }
+
+  func getTracks() throws {
+    let sem = DispatchSemaphore(value: 0)
+    var responseData : Data?
+    try connection.performRequest(
+      method:"GET",
+      urlString:"https://api.spotify.com/v1/me/tracks") {(data, response, error) in
         responseData = data
         sem.signal()
     }

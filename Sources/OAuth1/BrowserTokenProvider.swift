@@ -14,60 +14,60 @@
 
 import Foundation
 import Dispatch
-import Yaml
-import Kitura
+import HTTP
 import CryptoSwift
-import SwiftyJSON
 
-public class BrowserTokenProvider: TokenProvider {
-  public var consumerKey: String?
-  public var consumerSecret: String?
-  private var requestTokenURL: String?
-  private var authorizeURL: String?
-  private var accessTokenURL: String?
-  private var callback: String?
+struct Credentials : Codable {
+  let consumerKey : String
+  let consumerSecret : String
+  let requestTokenURL : String
+  let authorizeURL : String
+  let accessTokenURL : String
+  let callback : String
+  enum CodingKeys: String, CodingKey {
+    case consumerKey = "consumer_key"
+    case consumerSecret = "consumer_secret"
+    case requestTokenURL = "request_token_url"
+    case authorizeURL = "authorize_url"
+    case accessTokenURL = "access_token_url"
+    case callback = "callback"
+  }
+}
+
+struct AuthError : Error {
+
+}
+
+public class BrowserTokenProvider : TokenProvider {
+  private var credentials : Credentials
   public var token: Token?
+  private var sem: DispatchSemaphore?
 
-  public init(credentials: String, token tokenfile: String) throws {
+  public init?(credentials: String, token tokenfile: String) throws {
     let path = ProcessInfo.processInfo.environment["HOME"]!
       + "/.credentials/" + credentials
-    let data = try String(contentsOfFile: path, encoding: .utf8)
-    let yaml = try Yaml.load(data)
-    switch yaml {
-    case let .dictionary(d):
-      for (key, value) in d {
-        switch key {
-        case let .string(k):
-          if let v = value.string {
-            switch k {
-            case "consumer_key":
-              consumerKey = v
-            case "consumer_secret":
-              consumerSecret = v
-            case "request_token_url":
-              requestTokenURL = v
-            case "authorize_url":
-              authorizeURL = v
-            case "access_token_url":
-              accessTokenURL = v
-            case "callback":
-              callback = v
-            case "access_token_url":
-              accessTokenURL = v
-            default: break
-            }
-          }
-        default: break
-        }
-      }
-    default: break
+    let url = URL(fileURLWithPath:path)
+
+    guard let credentialsData = try? Data(contentsOf:url) else {
+      return nil
     }
+    let decoder = JSONDecoder()
+    guard let credentials = try? decoder.decode(Credentials.self,
+                                                from: credentialsData)
+      else {
+        return nil
+    }
+    self.credentials = credentials
 
     if tokenfile != "" {
       do {
         let data = try Data(contentsOf: URL(fileURLWithPath: tokenfile))
-        let json = JSON(data: data)
-        token = Token(json: json)
+        let decoder = JSONDecoder()
+        guard let token = try? decoder.decode(Token.self, from: data)
+          else {
+            throw AuthError()
+        }
+        self.token = token
       } catch {
         // ignore errors due to missing session files
       }
@@ -80,35 +80,32 @@ public class BrowserTokenProvider: TokenProvider {
     }
   }
 
+  func handler(request: HTTPRequest, response: HTTPResponseWriter ) -> HTTPBodyProcessing {
+    let urlComponents = URLComponents(string: request.target)!
+    let path = urlComponents.path
+    if path == credentials.callback {
+      self.token = Token(urlComponents: urlComponents)
+      DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
+        self.sem?.signal()
+      }
+      response.writeHeader(status: .ok)
+      response.writeBody("Success! Token received.\n")
+      response.done()
+      return .discardBody
+    } else {
+      response.writeHeader(status: .ok)
+      response.writeBody("Unknown request: \(path)\n")
+      response.done()
+      return .discardBody
+    }
+  }
+
   // StartServer starts a web server that listens on http://localhost:8080.
   // The webserver waits for an oauth code in the three-legged auth flow.
   private func startServer(sem: DispatchSemaphore) {
-    // Create a new router
-    let router = Router()
-
-    // Handle HTTP GET requests to /
-    router.get(callback!) {
-      request, response, next in
-      response.send("Hello, user!")
-
-      let urlComponents = URLComponents(string: request.originalURL)!
-
-      self.token = Token(urlComponents: urlComponents)
-      next()
-
-      DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-        Kitura.stop()
-        sem.signal()
-      }
-    }
-
-    // Add an HTTP server and connect it to the router
-    Kitura.addHTTPServer(onPort: 8080, with: router)
-
-    // Start the Kitura runloop on a separate thread
-    DispatchQueue.global().async {
-      Kitura.run()
-    }
+    self.sem = sem
+    let server = HTTPServer()
+    try! server.start(port: 8080, handler: handler)
   }
 
   public func signIn() throws {
@@ -117,16 +114,16 @@ public class BrowserTokenProvider: TokenProvider {
 
     let sem2 = DispatchSemaphore(value: 0)
 
-    var parameters = ["oauth_callback": "http://localhost:8080" + callback!]
+    let parameters = ["oauth_callback": "http://localhost:8080" + credentials.callback]
     var responseData: Data?
 
     Connection.performRequest(
       method: "POST",
-      urlString: requestTokenURL!,
-      parameters: &parameters,
+      urlString: credentials.requestTokenURL,
+      parameters: parameters,
       tokenSecret: "",
-      consumerKey: consumerKey!,
-      consumerSecret: consumerSecret!) { data, _, _ in
+      consumerKey: credentials.consumerKey,
+      consumerSecret: credentials.consumerSecret) { data, _, _ in
         responseData = data
         sem2.signal()
     }
@@ -138,7 +135,7 @@ public class BrowserTokenProvider: TokenProvider {
     token = Token(urlComponents: urlComponents)
 
     if true {
-      urlComponents = URLComponents(string: authorizeURL!)!
+      urlComponents = URLComponents(string: credentials.authorizeURL)!
       urlComponents.queryItems = [URLQueryItem(name: "oauth_token", value: encode(token!.oAuthToken!))]
       openURL(urlComponents.url!)
     }
@@ -148,23 +145,27 @@ public class BrowserTokenProvider: TokenProvider {
 
   private func exchange() throws {
     let sem = DispatchSemaphore(value: 0)
-    var parameters = [
+    let parameters = [
       "oauth_token": token!.oAuthToken!,
       "oauth_verifier": token!.oAuthVerifier!,
       ]
     var responseData: Data?
     Connection.performRequest(
       method: "POST",
-      urlString: accessTokenURL!,
-      parameters: &parameters,
+      urlString: credentials.accessTokenURL,
+      parameters: parameters,
       tokenSecret: "",
-      consumerKey: consumerKey!,
-      consumerSecret: consumerSecret!) { data, _, _ in
+      consumerKey: credentials.consumerKey,
+      consumerSecret: credentials.consumerSecret) { data, _, _ in
         responseData = data
         sem.signal()
     }
     _ = sem.wait(timeout: DispatchTime.distantFuture)
     let urlComponents = URLComponents(string: "http://example.com?" + String(data: responseData!, encoding: .utf8)!)!
     token = Token(urlComponents: urlComponents)
+  }
+
+  public func withToken(_ callback:@escaping (Token?, String?, String?, Error?) -> Void) throws {
+    callback(token, credentials.consumerKey, credentials.consumerSecret, nil)
   }
 }

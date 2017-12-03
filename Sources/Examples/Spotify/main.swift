@@ -15,8 +15,8 @@
 import Foundation
 import OAuth2
 
-let CREDENTIALS = "github.yaml"
-let TOKEN = "github.json"
+let CREDENTIALS = "spotify.json"
+let TOKEN = "spotify.json"
 
 func main() throws {
   let arguments = CommandLine.arguments
@@ -26,17 +26,27 @@ func main() throws {
     return
   }
 
-  let tokenProvider = try BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)
+  let tokenProvider = try BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)!
 
-  let github = try GitHubSession(tokenProvider:tokenProvider)
+  let spotify = try SpotifySession(tokenProvider:tokenProvider)
 
   if arguments[1] == "login" {
-    try tokenProvider.signIn(scopes:["user"])
+    try tokenProvider.signIn(scopes:["playlist-read-private",
+                                     "playlist-modify-public",
+                                     "playlist-modify-private",
+                                     "user-library-read",
+                                     "user-library-modify",
+                                     "user-read-private",
+                                     "user-read-email"])
     try tokenProvider.saveToken(TOKEN)
   }
 
   if arguments[1] == "me" {
-    try github.getMe()
+    try spotify.getUser()
+  }
+
+  if arguments[1] == "tracks" {
+    try spotify.getTracks()
   }
 }
 

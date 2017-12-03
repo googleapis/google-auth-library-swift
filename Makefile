@@ -1,8 +1,11 @@
 
 all:	
-	swift build
+	swift build -c release
+
+project:
+	swift package generate-xcodeproj
 
 clean:
-	rm -rf .build Package.pins
+	rm -rf .build Package.pins Package.resolved
 
 

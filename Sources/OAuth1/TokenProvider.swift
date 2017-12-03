@@ -13,8 +13,5 @@
 // limitations under the License.
 
 public protocol TokenProvider {
-  var token: Token? { get }
-
-  var consumerKey: String? { get }
-  var consumerSecret: String? { get }
+  func withToken(_ callback:@escaping (Token?, String?, String?, Error?) -> Void) throws
 }

@@ -7,20 +7,27 @@ to remote services.
 Currently these packages support OAuth1 and OAuth2.
 They are designed to work on OS X systems and on Linux systems that are
 running in the [Google Cloud](https://cloud.google.com).
-On OS X systems, OAuth tokens can be obtained using the locally-installed
+
+* On OS X systems, OAuth tokens can be obtained using the locally-installed
 browser and a local web server that is automatically run in the
 command-line client. 
-On Linux systems, OAuth tokens can be obtained from the
+
+* On Linux systems, OAuth tokens can be obtained automatically from the
 [Google Cloud Metadata Service](https://cloud.google.com/compute/docs/storing-retrieving-metadata).
 
-## Usage
+* On both Linux and OS X systems, OAuth tokens can be obtained automatically for
+[Google Cloud Service Accounts](https://cloud.google.com/iam/docs/understanding-service-accounts).
 
-For OAuth1 and OAuth2 examples, see the service clients in the
-[Examples](Examples) directory.
+## Usage and Examples
+
+[Sources/Examples](Sources/Examples) 
+contains examples that illustrate OAuth1 and OAuth2 signin for
+various services. Each requires valid application credentials to run.
+See the various service providers for details.
 
 Services look for OAuth configuration information in "credentials" YAML files
 that are expected to be in `$HOME/.credentials`. Sample credentials
-files are in [Examples/credentials](Examples/credentials)
+files are in [credentials](credentials)
 and include client IDs, client secrets, and OAuth service URLs.
 
 When OAuth services require registered callback URLs, these should be
@@ -30,9 +37,9 @@ web server runs locally on port 8080.
 
 ## Credits
 
-- The local web server is built using the [Kitura](https://github.com/IBM-Swift/Kitura) web framework.
-- JSON processing is done with the [SwiftyJSON](https://github.com/SwiftyJSON/SwiftyJSON) package.
-- HMAC hashing is performed using [CryptoSwift](https://github.com/krzyzanowskim/CryptoSwift).
+- The local web server is built using [swift-server/http](https://github.com/swift-server/http).
+- HMAC and SHA1 hashing is performed using [CryptoSwift](https://github.com/krzyzanowskim/CryptoSwift).
+- RSA signing of service account JWT tokens uses [BigInt](https://github.com/attaswift/BigInt).
 
 ## Disclaimer
 
