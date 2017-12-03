@@ -26,7 +26,7 @@ various services. Each requires valid application credentials to run.
 See the various service providers for details.
 
 Services look for OAuth configuration information in "credentials" YAML files
-that are expected to be in $HOME/.credentials. Sample credentials
+that are expected to be in `$HOME/.credentials`. Sample credentials
 files are in [credentials](credentials)
 and include client IDs, client secrets, and OAuth service URLs.
 
