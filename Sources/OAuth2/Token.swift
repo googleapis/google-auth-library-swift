@@ -14,12 +14,12 @@
 import Foundation
 
 public struct Token : Codable {
-  var AccessToken : String?
-  var TokenType : String?
-  var ExpiresIn : Int?
-  var RefreshToken : String?
-  var Scope : String?
-  var CreationTime : Date?
+  public var AccessToken : String?
+  public var TokenType : String?
+  public var ExpiresIn : Int?
+  public var RefreshToken : String?
+  public var Scope : String?
+  public var CreationTime : Date?
   enum CodingKeys: String, CodingKey {
     case AccessToken = "access_token"
     case TokenType = "token_type"
