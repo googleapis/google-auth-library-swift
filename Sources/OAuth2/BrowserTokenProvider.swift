@@ -31,10 +31,6 @@ struct Credentials : Codable {
   }
 }
 
-struct AuthError : Error {
-
-}
-
 public class BrowserTokenProvider: TokenProvider {
   private var credentials : Credentials
   private var code: Code?
@@ -64,7 +60,7 @@ public class BrowserTokenProvider: TokenProvider {
         let decoder = JSONDecoder()
         guard let token = try? decoder.decode(Token.self, from: data)
           else {
-            throw AuthError()
+            throw AuthError.unknownError
         }
         self.token = token
       } catch {
