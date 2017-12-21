@@ -17,13 +17,13 @@ import Dispatch
 import OAuth2
 
 class GitHubSession {
-
+  
   var connection : Connection
-
+  
   init(tokenProvider: TokenProvider) throws{
     connection = try Connection(provider:tokenProvider)
   }
-
+  
   func getMe() throws {
     let sem = DispatchSemaphore(value: 0)
     var responseData : Data?

@@ -20,16 +20,16 @@ let TOKEN = "spotify.json"
 
 func main() throws {
   let arguments = CommandLine.arguments
-
+  
   if arguments.count == 1 {
     print("Usage: \(arguments[0]) [options]")
     return
   }
-
+  
   let tokenProvider = try BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)!
-
+  
   let spotify = try SpotifySession(tokenProvider:tokenProvider)
-
+  
   if arguments[1] == "login" {
     try tokenProvider.signIn(scopes:["playlist-read-private",
                                      "playlist-modify-public",
@@ -40,11 +40,11 @@ func main() throws {
                                      "user-read-email"])
     try tokenProvider.saveToken(TOKEN)
   }
-
+  
   if arguments[1] == "me" {
     try spotify.getUser()
   }
-
+  
   if arguments[1] == "tracks" {
     try spotify.getTracks()
   }

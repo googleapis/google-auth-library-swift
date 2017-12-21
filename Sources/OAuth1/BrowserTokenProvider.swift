@@ -35,19 +35,19 @@ struct Credentials : Codable {
 }
 
 struct AuthError : Error {
-
+  
 }
 
 public class BrowserTokenProvider : TokenProvider {
   private var credentials : Credentials
   public var token: Token?
   private var sem: DispatchSemaphore?
-
+  
   public init?(credentials: String, token tokenfile: String) throws {
     let path = ProcessInfo.processInfo.environment["HOME"]!
       + "/.credentials/" + credentials
     let url = URL(fileURLWithPath:path)
-
+    
     guard let credentialsData = try? Data(contentsOf:url) else {
       return nil
     }
@@ -58,7 +58,7 @@ public class BrowserTokenProvider : TokenProvider {
         return nil
     }
     self.credentials = credentials
-
+    
     if tokenfile != "" {
       do {
         let data = try Data(contentsOf: URL(fileURLWithPath: tokenfile))
@@ -73,13 +73,13 @@ public class BrowserTokenProvider : TokenProvider {
       }
     }
   }
-
+  
   public func saveToken(_ filename: String) throws {
     if let token = token {
       try token.save(filename)
     }
   }
-
+  
   func handler(request: HTTPRequest, response: HTTPResponseWriter ) -> HTTPBodyProcessing {
     let urlComponents = URLComponents(string: request.target)!
     let path = urlComponents.path
@@ -99,7 +99,7 @@ public class BrowserTokenProvider : TokenProvider {
       return .discardBody
     }
   }
-
+  
   // StartServer starts a web server that listens on http://localhost:8080.
   // The webserver waits for an oauth code in the three-legged auth flow.
   private func startServer(sem: DispatchSemaphore) {
@@ -107,16 +107,16 @@ public class BrowserTokenProvider : TokenProvider {
     let server = HTTPServer()
     try! server.start(port: 8080, handler: handler)
   }
-
+  
   public func signIn() throws {
     let sem = DispatchSemaphore(value: 0)
     startServer(sem: sem)
-
+    
     let sem2 = DispatchSemaphore(value: 0)
-
+    
     let parameters = ["oauth_callback": "http://localhost:8080" + credentials.callback]
     var responseData: Data?
-
+    
     Connection.performRequest(
       method: "POST",
       urlString: credentials.requestTokenURL,
@@ -128,12 +128,12 @@ public class BrowserTokenProvider : TokenProvider {
         sem2.signal()
     }
     _ = sem2.wait(timeout: DispatchTime.distantFuture)
-
+    
     let params = String(data: responseData!, encoding: .utf8)
-
+    
     var urlComponents = URLComponents(string: "http://example.com?" + params!)!
     token = Token(urlComponents: urlComponents)
-
+    
     if true {
       urlComponents = URLComponents(string: credentials.authorizeURL)!
       urlComponents.queryItems = [URLQueryItem(name: "oauth_token", value: encode(token!.oAuthToken!))]
@@ -142,7 +142,7 @@ public class BrowserTokenProvider : TokenProvider {
     _ = sem.wait(timeout: DispatchTime.distantFuture)
     try exchange()
   }
-
+  
   private func exchange() throws {
     let sem = DispatchSemaphore(value: 0)
     let parameters = [
@@ -164,7 +164,7 @@ public class BrowserTokenProvider : TokenProvider {
     let urlComponents = URLComponents(string: "http://example.com?" + String(data: responseData!, encoding: .utf8)!)!
     token = Token(urlComponents: urlComponents)
   }
-
+  
   public func withToken(_ callback:@escaping (Token?, String?, String?, Error?) -> Void) throws {
     callback(token, credentials.consumerKey, credentials.consumerSecret, nil)
   }

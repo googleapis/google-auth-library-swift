@@ -14,5 +14,5 @@
 import Foundation
 
 enum AuthError: Error {
-    case unknownError
+  case unknownError
 }

@@ -15,29 +15,23 @@
 import Foundation
 import OAuth2
 
-let CREDENTIALS = ".credentials/service_account.json"
+let scopes = ["https://www.googleapis.com/auth/cloud-platform"]
 
-if #available(OSX 10.12, *) {
-    let homeURL = FileManager.default.homeDirectoryForCurrentUser
-    let credentialsURL = homeURL.appendingPathComponent(CREDENTIALS)
-    if let provider = ServiceAccountTokenProvider(credentialsURL:credentialsURL) {
-        let sem = DispatchSemaphore(value: 0)
-        try provider.withToken() {(token, error) -> Void in
-            if let token = token {
-                let encoder = JSONEncoder()
-                if let token = try? encoder.encode(token) {
-                    print("\(String(data:token, encoding:.utf8)!)")
-                }
-            }
-            if let error = error {
-                print("ERROR \(error)")
-            }
-            sem.signal()
-        }
-        _ = sem.wait(timeout: DispatchTime.distantFuture)
-    } else {
-      print("Unable to read service account credentials from $HOME/\(CREDENTIALS).")
+if let provider = DefaultTokenProvider(scopes: scopes) {
+  let sem = DispatchSemaphore(value: 0)
+  try provider.withToken() {(token, error) -> Void in
+    if let token = token {
+      let encoder = JSONEncoder()
+      if let token = try? encoder.encode(token) {
+        print("\(String(data:token, encoding:.utf8)!)")
+      }
     }
+    if let error = error {
+      print("ERROR \(error)")
+    }
+    sem.signal()
+  }
+  _ = sem.wait(timeout: DispatchTime.distantFuture)
 } else {
-    print("This sample requires OSX 10.12 or later.")
+  print("Unable to read service account credentials. Is GOOGLE_APPLICATION_CREDENTIALS set to point to them?")
 }

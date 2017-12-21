@@ -21,7 +21,7 @@ public struct Token : Codable {
   public var screenName: String?
   public var userID: String?
   public var creationTime: Date?
-
+  
   enum CodingKeys: String, CodingKey {
     case oAuthToken = "oauth_token"
     case oAuthTokenSecret = "oauth_token_secret"
@@ -31,7 +31,7 @@ public struct Token : Codable {
     case userID = "user_id"
     case creationTime = "creation_time"
   }
-
+  
   public init(urlComponents: URLComponents) {
     creationTime = Date()
     for queryItem in urlComponents.queryItems! {
@@ -55,7 +55,7 @@ public struct Token : Codable {
       }
     }
   }
-
+  
   func save(_ filename: String) throws {
     let encoder = JSONEncoder()
     let data = try encoder.encode(self)

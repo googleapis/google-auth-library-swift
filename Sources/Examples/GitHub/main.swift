@@ -20,21 +20,21 @@ let TOKEN = "github.json"
 
 func main() throws {
   let arguments = CommandLine.arguments
-
+  
   if arguments.count == 1 {
     print("Usage: \(arguments[0]) [options]")
     return
   }
-
+  
   let tokenProvider = try BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)!
-
+  
   let github = try GitHubSession(tokenProvider:tokenProvider)
-
+  
   if arguments[1] == "login" {
     try tokenProvider.signIn(scopes:["user"])
     try tokenProvider.saveToken(TOKEN)
   }
-
+  
   if arguments[1] == "me" {
     try github.getMe()
   }

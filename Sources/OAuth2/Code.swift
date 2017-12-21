@@ -17,7 +17,7 @@ class Code {
   var code: String?
   var state: String?
   var error: String?
-
+  
   init(urlComponents: URLComponents) {
     for queryItem in urlComponents.queryItems! {
       if let value = queryItem.value {

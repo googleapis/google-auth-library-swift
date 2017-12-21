@@ -25,7 +25,7 @@ struct RSAKey {
    var Dq: BigUInt
    var Qinv : BigUInt
    */
-
+  
   init?(privateKey:String) {
     var pem = ""
     for line in privateKey.components(separatedBy:"\n") {
@@ -42,7 +42,7 @@ struct RSAKey {
       return nil
     }
   }
-
+  
   func sign(hash:[UInt8]) -> [UInt8] {
     let prefix : [UInt8] = [0x30, 0x31, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01, 0x05, 0x00, 0x04, 0x20]
     var dataToEncode = [UInt8](repeating: 0xFF, count: 256)

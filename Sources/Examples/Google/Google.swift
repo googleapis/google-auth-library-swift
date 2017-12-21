@@ -18,14 +18,14 @@ import OAuth2
 
 class GoogleSession {
   var connection : Connection
-
+  
   init(tokenProvider: TokenProvider) throws{
     connection = try Connection(provider:tokenProvider)
   }
-
+  
   func getMe() throws {
     let sem = DispatchSemaphore(value: 0)
-
+    
     let parameters = ["requestMask.includeField": "person.names,person.photos"]
     var responseData : Data?
     try connection.performRequest(
@@ -42,7 +42,7 @@ class GoogleSession {
       print(response)
     }
   }
-
+  
   func getPeople() throws {
     let sem = DispatchSemaphore(value: 0)
     var responseData : Data?
@@ -61,7 +61,7 @@ class GoogleSession {
       print(response)
     }
   }
-
+  
   func getData() throws {
     let sem = DispatchSemaphore(value: 0)
     var responseData : Data?
@@ -89,7 +89,7 @@ class GoogleSession {
     //print("\(request)")
     //let result = try service.runquery(request)
   }
-
+  
   func translate(_ input:String) throws {
     let sem = DispatchSemaphore(value: 0)
     var responseData : Data?

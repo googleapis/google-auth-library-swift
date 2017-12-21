@@ -17,25 +17,25 @@ import Dispatch
 import CryptoSwift
 
 public class Connection {
-
+  
   public var provider : TokenProvider
-
+  
   public init(provider : TokenProvider) throws {
     self.provider = provider
   }
-
+  
   class func signOAuthRequest(
     method : String,
     urlString : String,
     parameters : inout [String:String],
     secret : String) {
-
+    
     // sort the keys of the method call
     let sortedMethodKeys = Array(parameters.keys).sorted(by:<)
-
+    
     // build the signature base string
     var presignature = ""
-
+    
     for key in sortedMethodKeys {
       if presignature != "" {
         presignature += "&"
@@ -43,12 +43,12 @@ public class Connection {
       presignature += key + "=" + encode(parameters[key]!)
     }
     let signatureBaseString = method + "&" + encode(urlString) + "&" + encode(presignature)
-
+    
     // generate the signature
     let hmac = try! CryptoSwift.HMAC(key: secret, variant: .sha1).authenticate(Array(signatureBaseString.utf8))
     parameters["oauth_signature"] = hmac.toBase64()!
   }
-
+  
   public class func performRequest(
     method : String,
     urlString : String,
@@ -57,7 +57,7 @@ public class Connection {
     consumerKey : String,
     consumerSecret : String,
     callback: @escaping (Data?, URLResponse?, Error?)->()) {
-
+    
     // prepare the request for signing
     var parameters = parameters
     parameters["oauth_consumer_key"] = consumerKey
@@ -65,13 +65,13 @@ public class Connection {
     parameters["oauth_nonce"] = UUID().uuidString
     parameters["oauth_timestamp"] = String(Int(NSDate().timeIntervalSince1970))
     parameters["oauth_signature_method"] = "HMAC-SHA1"
-
+    
     // sign the request
     signOAuthRequest(method:method, urlString:urlString, parameters:&parameters, secret:consumerSecret + "&" + tokenSecret)
-
+    
     // sort the keys of the method call
     let sortedMethodKeys = Array(parameters.keys).sorted(by:<)
-
+    
     // build the authorization string
     var authorization = "OAuth "
     var i = 0
@@ -84,7 +84,7 @@ public class Connection {
         i += 1
       }
     }
-
+    
     var urlComponents = URLComponents(string:urlString)!
     var queryItems : [URLQueryItem] = []
     for key in sortedMethodKeys {
@@ -93,24 +93,24 @@ public class Connection {
       }
     }
     urlComponents.queryItems = queryItems
-
+    
     var request = URLRequest(url: urlComponents.url!)
     request.setValue(authorization, forHTTPHeaderField:"Authorization")
     request.httpMethod = method
-
+    
     let session = URLSession(configuration: URLSessionConfiguration.default)
     let task: URLSessionDataTask = session.dataTask(with:request) { (data, response, error) -> Void in
       callback(data, response, error)
     }
     task.resume()
   }
-
+  
   public func performRequest(
     method : String,
     urlString : String,
     parameters : [String:String],
     callback: @escaping (Data?, URLResponse?, Error?)->()) throws {
-
+    
     try provider.withToken() {(token, consumerKey, consumerSecret, err) in
       guard let token = token else {
         return
@@ -131,7 +131,7 @@ public class Connection {
         callback: callback)
     }
   }
-
+  
   public func performRequest(
     method : String,
     urlString : String,

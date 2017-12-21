@@ -27,21 +27,21 @@ private extension Data {
 
 private class ASN1Scanner {
   let data: Data
-
+  
   private(set) var position = 0
-
+  
   init(data: Data) {
     self.data = data
   }
-
+  
   var isComplete: Bool {
     return position >= data.count
   }
-
+  
   var remaining: Int {
     return data.count - position
   }
-
+  
   func scan(distance: Int) -> Data? {
     guard distance > 0 else { return nil }
     guard position <= (data.count - distance) else { return nil }
@@ -50,7 +50,7 @@ private class ASN1Scanner {
     }
     return data.subdata(in: data.startIndex.advanced(by: position)..<data.startIndex.advanced(by: position + distance))
   }
-
+  
   func scanLength() -> Int {
     var length = 0
     if let lengthByte = self.scan(distance: 1)?.firstByte {

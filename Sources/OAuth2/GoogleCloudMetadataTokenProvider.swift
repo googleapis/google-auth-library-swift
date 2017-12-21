@@ -17,15 +17,15 @@ import Dispatch
 
 public class GoogleCloudMetadataTokenProvider : TokenProvider {
   public func withToken(_ callback: @escaping (Token?, Error?) -> Void) throws {
-	callback(token, nil)
+    callback(token, nil)
   }
-
+  
   public var token: Token?
-
+  
   public init() throws {
     refresh()
   }
-
+  
   public func refresh() {
     let sem = DispatchSemaphore(value: 0)
     let urlString = "http://metadata/computeMetadata/v1/instance/service-accounts/default/token"

@@ -18,11 +18,11 @@ import CryptoSwift
 
 public class Connection {
   public var provider: TokenProvider
-
+  
   public init(provider: TokenProvider) throws {
     self.provider = provider
   }
-
+  
   public class func performRequest(
     method: String,
     urlString: String,
@@ -30,9 +30,9 @@ public class Connection {
     body: Data!,
     authorization: String,
     callback: @escaping (Data?, URLResponse?, Error?) -> Void) {
-
+    
     var urlComponents = URLComponents(string: urlString)!
-
+    
     var queryItems: [URLQueryItem] = []
     for (key, value) in parameters {
       queryItems.append(URLQueryItem(name: key, value: value))
@@ -40,7 +40,7 @@ public class Connection {
     if method == "GET" || body != nil {
       urlComponents.queryItems = queryItems
     }
-
+    
     var request = URLRequest(url: urlComponents.url!)
     request.setValue(authorization, forHTTPHeaderField: "Authorization")
     request.httpMethod = method
@@ -55,21 +55,21 @@ public class Connection {
         request.httpBody = string.data(using: .utf8)
       }
     }
-
+    
     let session = URLSession(configuration: URLSessionConfiguration.default)
     let task: URLSessionDataTask = session.dataTask(with: request) { (data, response, error) -> Void in
       callback(data, response, error)
     }
     task.resume()
   }
-
+  
   public func performRequest(
     method: String,
     urlString: String,
     parameters: [String: String],
     body: Data!,
     callback: @escaping (Data?, URLResponse?, Error?) -> Void) throws {
-
+    
     try provider.withToken {token, err in
       guard let token = token else {
         return
@@ -91,7 +91,7 @@ public class Connection {
     method: String,
     urlString: String,
     callback: @escaping (Data?, URLResponse?, Error?) -> Void) throws {
-
+    
     let parameters: [String: String] = [:]
     try performRequest(
       method: method,

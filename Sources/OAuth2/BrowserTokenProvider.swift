@@ -35,14 +35,14 @@ public class BrowserTokenProvider: TokenProvider {
   private var credentials : Credentials
   private var code: Code?
   public var token: Token?
-
+  
   private var sem: DispatchSemaphore?
-
+  
   public init?(credentials: String, token tokenfile: String) throws {
     let path = ProcessInfo.processInfo.environment["HOME"]!
       + "/.credentials/" + credentials
     let url = URL(fileURLWithPath:path)
-
+    
     guard let credentialsData = try? Data(contentsOf:url) else {
       return nil
     }
@@ -53,7 +53,7 @@ public class BrowserTokenProvider: TokenProvider {
         return nil
     }
     self.credentials = credentials
-
+    
     if tokenfile != "" {
       do {
         let data = try Data(contentsOf: URL(fileURLWithPath: tokenfile))
@@ -68,13 +68,13 @@ public class BrowserTokenProvider: TokenProvider {
       }
     }
   }
-
+  
   public func saveToken(_ filename: String) throws {
     if let token = token {
       try token.save(filename)
     }
   }
-
+  
   func handler(request: HTTPRequest, response: HTTPResponseWriter ) -> HTTPBodyProcessing {
     let urlComponents = URLComponents(string: request.target)!
     let path = urlComponents.path
@@ -94,7 +94,7 @@ public class BrowserTokenProvider: TokenProvider {
       return .discardBody
     }
   }
-
+  
   // StartServer starts a web server that listens on http://localhost:8080.
   // The webserver waits for an oauth code in the three-legged auth flow.
   private func startServer(sem: DispatchSemaphore) {
@@ -102,7 +102,7 @@ public class BrowserTokenProvider: TokenProvider {
     let server = HTTPServer()
     try! server.start(port: 8080, handler: handler)
   }
-
+  
   private func exchange() throws -> Token {
     let sem = DispatchSemaphore(value: 0)
     let parameters = [
@@ -131,7 +131,7 @@ public class BrowserTokenProvider: TokenProvider {
     }
     _ = sem.wait(timeout: DispatchTime.distantFuture)
     if contentType != nil && contentType!.contains("application/json") {
-
+      
       let decoder = JSONDecoder()
       let token = try! decoder.decode(Token.self, from: responseData!)
       return token
@@ -140,14 +140,14 @@ public class BrowserTokenProvider: TokenProvider {
       return Token(urlComponents: urlComponents)
     }
   }
-
+  
   public func signIn(scopes: [String]) throws {
     let sem = DispatchSemaphore(value: 0)
     startServer(sem: sem)
-
+    
     let state = UUID().uuidString
     let scope = scopes.joined(separator: " ")
-
+    
     var urlComponents = URLComponents(string: credentials.authorizeURL)!
     urlComponents.queryItems = [
       URLQueryItem(name: "client_id", value: credentials.clientID),
@@ -161,7 +161,7 @@ public class BrowserTokenProvider: TokenProvider {
     _ = sem.wait(timeout: DispatchTime.distantFuture)
     token = try exchange()
   }
-
+  
   public func withToken(_ callback: @escaping (Token?, Error?) -> Void) throws {
     callback(token, nil)
   }

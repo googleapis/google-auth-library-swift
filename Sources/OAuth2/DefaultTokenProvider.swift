@@ -21,18 +21,18 @@ import Foundation
 public class DefaultTokenProvider : TokenProvider {
   public var token: Token?
   private var serviceAccountTokenProvider : ServiceAccountTokenProvider
-
-  public init?() {
+  
+  public init?(scopes:[String]) {
     guard let credentials = ProcessInfo.processInfo.environment["GOOGLE_APPLICATION_CREDENTIALS"] else {
       return nil
     }
     let credentialsURL = URL(fileURLWithPath:credentials)
-    guard let provider = ServiceAccountTokenProvider(credentialsURL:credentialsURL) else {
+    guard let provider = ServiceAccountTokenProvider(credentialsURL:credentialsURL, scopes:scopes) else {
       return nil
     }
     serviceAccountTokenProvider = provider
   }
-
+  
   public func withToken(_ callback:@escaping (Token?, Error?) -> Void) throws {
     try serviceAccountTokenProvider.withToken() {(token, error) in
       self.token = token

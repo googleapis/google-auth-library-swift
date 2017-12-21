@@ -18,11 +18,11 @@ import OAuth1
 
 class TwitterSession {
   public var connection : Connection
-
+  
   init(tokenProvider: TokenProvider) throws{
     connection = try Connection(provider:tokenProvider)
   }
-
+  
   func getTweets() throws {
     let sem = DispatchSemaphore(value: 0)
     var responseData : Data?

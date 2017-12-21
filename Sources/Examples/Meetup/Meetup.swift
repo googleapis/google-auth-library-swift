@@ -17,13 +17,13 @@ import Dispatch
 import OAuth2
 
 class MeetupSession {
-
+  
   var connection : Connection
-
+  
   init(tokenProvider: TokenProvider) throws{
     connection = try Connection(provider:tokenProvider)
   }
-
+  
   func getMe() throws {
     let sem = DispatchSemaphore(value: 0)
     var responseData : Data?
@@ -39,7 +39,7 @@ class MeetupSession {
       print(response)
     }
   }
-
+  
   func getRSVPs(eventid : String) throws {
     let sem = DispatchSemaphore(value: 0)
     var responseData : Data?
@@ -55,7 +55,7 @@ class MeetupSession {
       print(response)
     }
   }
-
+  
   func getEvents() throws {
     let sem = DispatchSemaphore(value: 0)
     let parameters : [String:String] = ["status":"past"]

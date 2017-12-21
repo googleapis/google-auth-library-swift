@@ -20,29 +20,29 @@ let TOKEN = "meetup.json"
 
 func main() throws {
   let arguments = CommandLine.arguments
-
+  
   if arguments.count == 1 {
     print("Usage: \(arguments[0]) [options]")
     return
   }
-
+  
   let tokenProvider = try BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)!
-
+  
   let meetup = try MeetupSession(tokenProvider:tokenProvider)
-
+  
   if arguments[1] == "login" {
     try tokenProvider.signIn(scopes:["basic", "ageless"])
     try tokenProvider.saveToken(TOKEN)
   }
-
+  
   if arguments[1] == "me" {
     try meetup.getMe()
   }
-
+  
   if arguments[1] == "rsvps" {
     try meetup.getRSVPs(eventid:arguments[2])
   }
-
+  
   if arguments[1] == "events" {
     try meetup.getEvents()
   }

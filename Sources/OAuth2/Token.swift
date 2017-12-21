@@ -28,17 +28,17 @@ public struct Token : Codable {
     case Scope = "scope"
     case CreationTime = "creation_time"
   }
-
+  
   func save(_ filename: String) throws {
     let encoder = JSONEncoder()
     let data = try encoder.encode(self)
     try data.write(to: URL(fileURLWithPath: filename))
   }
-
+  
   public init(accessToken: String) {
     self.AccessToken = accessToken
   }
-
+  
   public init(urlComponents: URLComponents) {
     CreationTime = Date()
     for queryItem in urlComponents.queryItems! {

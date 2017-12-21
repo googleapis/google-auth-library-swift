@@ -23,51 +23,56 @@ let TOKEN = "google.json"
 
 func main() throws {
   let arguments = CommandLine.arguments
-
+  
   if arguments.count == 1 {
     print("Usage: \(arguments[0]) [options]")
     return
   }
-
+  
   var tokenProvider : TokenProvider
   #if os(OSX)
     tokenProvider = try BrowserTokenProvider(credentials:CLIENT_CREDENTIALS, token:TOKEN)!
   #else
     tokenProvider = try GoogleCloudMetadataTokenProvider()
   #endif
-
+  
+  let scopes = ["profile",
+                "https://www.googleapis.com/auth/contacts.readonly",
+                "https://www.googleapis.com/auth/cloud-platform"]
+  
   if USE_SERVICE_ACCOUNT {
     if #available(OSX 10.12, *) {
       let homeURL = FileManager.default.homeDirectoryForCurrentUser
       let credentialsURL = homeURL.appendingPathComponent(SERVICE_ACCOUNT_CREDENTIALS)
-      tokenProvider = ServiceAccountTokenProvider(credentialsURL:credentialsURL)!
+      tokenProvider = ServiceAccountTokenProvider(credentialsURL:credentialsURL,
+                                                  scopes:scopes)!
     } else {
       print("This sample requires OSX 10.12 or later.")
     }
   }
-
+  
   let google = try GoogleSession(tokenProvider:tokenProvider)
-
+  
   if arguments[1] == "login" {
     #if os(OSX)
       let browserTokenProvider = tokenProvider as! BrowserTokenProvider
-      try browserTokenProvider.signIn(scopes:["profile", "https://www.googleapis.com/auth/contacts.readonly", "https://www.googleapis.com/auth/cloud-platform"])
+      try browserTokenProvider.signIn(scopes:scopes)
       try browserTokenProvider.saveToken(TOKEN)
     #endif
   }
-
+  
   if arguments[1] == "me" {
     try google.getMe()
   }
-
+  
   if arguments[1] == "people" {
     try google.getPeople()
   }
-
+  
   if arguments[1] == "data" {
     try google.getData()
   }
-
+  
   if arguments[1] == "translate" && arguments.count > 2 {
     let text = arguments[2]
     try google.translate(text)

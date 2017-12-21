@@ -17,13 +17,13 @@ import Dispatch
 import OAuth2
 
 class SpotifySession {
-
+  
   var connection : Connection
-
+  
   init(tokenProvider: TokenProvider) throws{
     connection = try Connection(provider:tokenProvider)
   }
-
+  
   func getUser() throws {
     let sem = DispatchSemaphore(value: 0)
     var responseData : Data?
@@ -39,7 +39,7 @@ class SpotifySession {
       print(response)
     }
   }
-
+  
   func getTracks() throws {
     let sem = DispatchSemaphore(value: 0)
     var responseData : Data?
