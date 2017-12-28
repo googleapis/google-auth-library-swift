@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'AuthLibrary'
-  s.version          = '0.1.0'
+  s.version          = '0.3.5'
   s.summary          = 'Auth client library for Swift command-line tools, cloud services, and apps.'
 
   s.description      = <<-DESC
@@ -23,8 +23,6 @@ The CocoaPods distribution supports iOS-based authentication using Google Cloud 
   s.license          = { :type => 'Apache License, Version 2.0', :file => 'LICENSE' }
   s.author           = 'Google'
   s.source           = { :git => 'https://github.com/google/auth-library-swift.git', :tag => s.version.to_s }
-
-  s.ios.deployment_target = '8.0'
 
   s.source_files = 
 	'Sources/OAuth2/ASN1.swift',
