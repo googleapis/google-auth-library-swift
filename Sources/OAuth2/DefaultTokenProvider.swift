@@ -14,27 +14,47 @@
 
 import Foundation
 
-// WARNING: This is an INCOMPLETE implementation of Application Default Credentials.
-// It supports service accounts through the GOOGLE_APPLICATION_CREDENTIALS environment variable.
-// No other authorization methods are supported yet.
+// This class implements Google Application Default Credentials.
+// https://developers.google.com/identity/protocols/application-default-credentials
 
 public class DefaultTokenProvider : TokenProvider {
   public var token: Token?
-  private var serviceAccountTokenProvider : ServiceAccountTokenProvider
+  private var tokenProvider : TokenProvider
   
   public init?(scopes:[String]) {
-    guard let credentials = ProcessInfo.processInfo.environment["GOOGLE_APPLICATION_CREDENTIALS"] else {
+    // if GOOGLE_APPLICATION_CREDENTIALS is set,
+    // use it to get service account credentials.
+    if let credentialsPath = ProcessInfo.processInfo.environment["GOOGLE_APPLICATION_CREDENTIALS"]  {
+      let credentialsURL = URL(fileURLWithPath:credentialsPath)
+      guard let provider = ServiceAccountTokenProvider(credentialsURL:credentialsURL, scopes:scopes) else {
+        return nil
+      }
+      tokenProvider = provider
+      return
+    }
+    // if $HOME/.config/gcloud/application_default_credentials.json exists,
+    // use it to request an access token.
+    if let home = ProcessInfo.processInfo.environment["HOME"] {
+      let credentialsPath = home + "/.config/gcloud/application_default_credentials.json"
+      if FileManager.default.fileExists(atPath:credentialsPath) {
+        let credentialsURL = URL(fileURLWithPath:credentialsPath)
+        guard let provider = GoogleRefreshTokenProvider(credentialsURL:credentialsURL) else {
+          return nil
+        }
+        tokenProvider = provider
+        return
+      }
+    }
+    // as a last resport, assume we are running on Google Compute Engine or Google App Engine
+    // and try to get a token from the metadata service.
+    guard let provider = GoogleCloudMetadataTokenProvider() else {
       return nil
     }
-    let credentialsURL = URL(fileURLWithPath:credentials)
-    guard let provider = ServiceAccountTokenProvider(credentialsURL:credentialsURL, scopes:scopes) else {
-      return nil
-    }
-    serviceAccountTokenProvider = provider
+    tokenProvider = provider
   }
   
   public func withToken(_ callback:@escaping (Token?, Error?) -> Void) throws {
-    try serviceAccountTokenProvider.withToken() {(token, error) in
+    try tokenProvider.withToken() {(token, error) in
       self.token = token
       callback(token, error)
     }

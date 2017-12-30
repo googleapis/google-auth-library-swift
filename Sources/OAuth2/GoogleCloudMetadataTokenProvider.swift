@@ -22,8 +22,11 @@ public class GoogleCloudMetadataTokenProvider : TokenProvider {
   
   public var token: Token?
   
-  public init() throws {
+  public init?() {
     refresh()
+    if token == nil {
+      return nil
+    }
   }
   
   public func refresh() {
@@ -34,10 +37,12 @@ public class GoogleCloudMetadataTokenProvider : TokenProvider {
     request.setValue("Google", forHTTPHeaderField:"Metadata-Flavor")
     request.httpMethod = "GET"
     let session = URLSession(configuration: URLSessionConfiguration.default)
-    let task: URLSessionDataTask = session.dataTask(with:request) { (data, response, error) -> Void in
-      let decoder = JSONDecoder()
-      let token = try? decoder.decode(Token.self, from: data!)
-      self.token = token!
+    let task: URLSessionDataTask = session.dataTask(with:request) {
+      (data, response, error) -> Void in
+      if let data = data {
+        let decoder = JSONDecoder()
+        self.token = try? decoder.decode(Token.self, from: data)
+      }
       sem.signal()
     }
     task.resume()

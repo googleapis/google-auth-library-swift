@@ -33,5 +33,5 @@ if let provider = DefaultTokenProvider(scopes: scopes) {
   }
   _ = sem.wait(timeout: DispatchTime.distantFuture)
 } else {
-  print("Unable to read service account credentials. Is GOOGLE_APPLICATION_CREDENTIALS set to point to them?")
+  print("Unable to obtain an auth token.\nTry pointing GOOGLE_APPLICATION_CREDENTIALS to your service account credentials.")
 }
