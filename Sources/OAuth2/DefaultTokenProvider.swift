@@ -45,7 +45,7 @@ public class DefaultTokenProvider : TokenProvider {
         return
       }
     }
-    // as a last resport, assume we are running on Google Compute Engine or Google App Engine
+    // as a last resort, assume we are running on Google Compute Engine or Google App Engine
     // and try to get a token from the metadata service.
     guard let provider = GoogleCloudMetadataTokenProvider() else {
       return nil
