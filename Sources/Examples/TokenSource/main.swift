@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import Foundation
+import Dispatch
 import OAuth2
 
 let scopes = ["https://www.googleapis.com/auth/cloud-platform"]

@@ -33,7 +33,7 @@ func main() throws {
   #if os(OSX)
     tokenProvider = try BrowserTokenProvider(credentials:CLIENT_CREDENTIALS, token:TOKEN)!
   #else
-    tokenProvider = try GoogleCloudMetadataTokenProvider()
+    tokenProvider = try DefaultTokenProvider()!
   #endif
   
   let scopes = ["profile",
