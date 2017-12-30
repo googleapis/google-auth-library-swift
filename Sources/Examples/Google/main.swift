@@ -29,16 +29,16 @@ func main() throws {
     return
   }
   
+  let scopes = ["profile",
+                "https://www.googleapis.com/auth/contacts.readonly",
+                "https://www.googleapis.com/auth/cloud-platform"]
+  
   var tokenProvider : TokenProvider
   #if os(OSX)
     tokenProvider = BrowserTokenProvider(credentials:CLIENT_CREDENTIALS, token:TOKEN)!
   #else
-    tokenProvider = DefaultTokenProvider()!
+    tokenProvider = DefaultTokenProvider(scopes:scopes)!
   #endif
-  
-  let scopes = ["profile",
-                "https://www.googleapis.com/auth/contacts.readonly",
-                "https://www.googleapis.com/auth/cloud-platform"]
   
   if USE_SERVICE_ACCOUNT {
     if #available(OSX 10.12, *) {
