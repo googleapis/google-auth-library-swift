@@ -26,7 +26,7 @@ func main() throws {
     return
   }
   
-  let tokenProvider = try BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)!
+  let tokenProvider = BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)!
   
   let spotify = try SpotifySession(tokenProvider:tokenProvider)
   

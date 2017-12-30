@@ -31,9 +31,9 @@ func main() throws {
   
   var tokenProvider : TokenProvider
   #if os(OSX)
-    tokenProvider = try BrowserTokenProvider(credentials:CLIENT_CREDENTIALS, token:TOKEN)!
+    tokenProvider = BrowserTokenProvider(credentials:CLIENT_CREDENTIALS, token:TOKEN)!
   #else
-    tokenProvider = try DefaultTokenProvider()!
+    tokenProvider = DefaultTokenProvider()!
   #endif
   
   let scopes = ["profile",

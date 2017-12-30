@@ -43,7 +43,7 @@ public class BrowserTokenProvider : TokenProvider {
   public var token: Token?
   private var sem: DispatchSemaphore?
   
-  public init?(credentials: String, token tokenfile: String) throws {
+  public init?(credentials: String, token tokenfile: String) {
     let path = ProcessInfo.processInfo.environment["HOME"]!
       + "/.credentials/" + credentials
     let url = URL(fileURLWithPath:path)
