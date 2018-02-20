@@ -34,8 +34,10 @@ struct Credentials : Codable {
   }
 }
 
-struct AuthError : Error {
-  
+
+enum AuthError : Error {
+  case invalidTokenFile
+  case tokenRequestFailed
 }
 
 public class BrowserTokenProvider : TokenProvider {
@@ -43,7 +45,7 @@ public class BrowserTokenProvider : TokenProvider {
   public var token: Token?
   private var sem: DispatchSemaphore?
   
-  public init?(credentials: String, token tokenfile: String) {
+  public init?(credentials: String, token tokenfile: String) throws {
     let path = ProcessInfo.processInfo.environment["HOME"]!
       + "/.credentials/" + credentials
     let url = URL(fileURLWithPath:path)
@@ -65,7 +67,7 @@ public class BrowserTokenProvider : TokenProvider {
         let decoder = JSONDecoder()
         guard let token = try? decoder.decode(Token.self, from: data)
           else {
-            throw AuthError()
+            throw AuthError.invalidTokenFile
         }
         self.token = token
       } catch {
@@ -115,7 +117,10 @@ public class BrowserTokenProvider : TokenProvider {
     let sem2 = DispatchSemaphore(value: 0)
     
     let parameters = ["oauth_callback": "http://localhost:8080" + credentials.callback]
-    var responseData: Data?
+
+    var data: Data?
+    var response: HTTPURLResponse?
+    var error : Error?
     
     Connection.performRequest(
       method: "POST",
@@ -123,24 +128,38 @@ public class BrowserTokenProvider : TokenProvider {
       parameters: parameters,
       tokenSecret: "",
       consumerKey: credentials.consumerKey,
-      consumerSecret: credentials.consumerSecret) { data, _, _ in
-        responseData = data
+      consumerSecret: credentials.consumerSecret) { d, r, e in
+        data = d
+        response = r as! HTTPURLResponse?
+        error = e
         sem2.signal()
     }
     _ = sem2.wait(timeout: DispatchTime.distantFuture)
     
-    let params = String(data: responseData!, encoding: .utf8)
+    if let error = error {
+      throw error
+    }
     
-    var urlComponents = URLComponents(string: "http://example.com?" + params!)!
-    token = Token(urlComponents: urlComponents)
-    
-    if true {
-      urlComponents = URLComponents(string: credentials.authorizeURL)!
+    if let response = response,
+      let data = data {
+      if response.statusCode != 200 {
+        throw AuthError.tokenRequestFailed
+      }
+      guard let params = String(data: data, encoding: .utf8) else {
+        throw AuthError.tokenRequestFailed
+      }
+      
+      token = Token(urlComponents: URLComponents(string: "http://example.com?" + params)!)
+      
+      var urlComponents = URLComponents(string: credentials.authorizeURL)!
       urlComponents.queryItems = [URLQueryItem(name: "oauth_token", value: encode(token!.oAuthToken!))]
       openURL(urlComponents.url!)
+      
+      _ = sem.wait(timeout: DispatchTime.distantFuture)
+      try exchange()
+    } else {
+      throw AuthError.tokenRequestFailed
     }
-    _ = sem.wait(timeout: DispatchTime.distantFuture)
-    try exchange()
   }
   
   private func exchange() throws {
