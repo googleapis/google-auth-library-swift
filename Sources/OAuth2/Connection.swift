@@ -33,7 +33,7 @@ public class Connection {
     
     var urlComponents = URLComponents(string: urlString)!
     
-    var queryItems: [URLQueryItem] = []
+    var queryItems: [URLQueryItem] = urlComponents.queryItems ?? []
     for (key, value) in parameters {
       queryItems.append(URLQueryItem(name: key, value: value))
     }
