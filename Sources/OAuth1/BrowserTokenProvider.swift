@@ -34,29 +34,32 @@ struct Credentials : Codable {
   }
 }
 
-
 enum AuthError : Error {
   case invalidTokenFile
   case tokenRequestFailed
 }
 
-public class BrowserTokenProvider : TokenProvider {
+public class BrowserTokenProvider : TokenProvider, HTTPServerResponder {
   private var credentials : Credentials
   public var token: Token?
-  private var sem: DispatchSemaphore?
   
+  private var sem: DispatchSemaphore?
+  private var server: HTTPServer?
+
   public init?(credentials: String, token tokenfile: String) throws {
     let path = ProcessInfo.processInfo.environment["HOME"]!
       + "/.credentials/" + credentials
     let url = URL(fileURLWithPath:path)
     
     guard let credentialsData = try? Data(contentsOf:url) else {
+      print("No credentials data at \(path)")
       return nil
     }
     let decoder = JSONDecoder()
     guard let credentials = try? decoder.decode(Credentials.self,
                                                 from: credentialsData)
       else {
+        print("Error reading credentials")
         return nil
     }
     self.credentials = credentials
@@ -81,39 +84,40 @@ public class BrowserTokenProvider : TokenProvider {
       try token.save(filename)
     }
   }
-  
-  func handler(request: HTTPRequest, response: HTTPResponseWriter ) -> HTTPBodyProcessing {
-    let urlComponents = URLComponents(string: request.target)!
-    let path = urlComponents.path
-    if path == credentials.callback {
+
+  /// See `HTTPServerResponder`.
+  public func respond(to req: HTTPRequest, on worker: Worker) -> Future<HTTPResponse> {
+    if req.url.path == credentials.callback {
+      let urlComponents = URLComponents(string: req.urlString)!
       self.token = Token(urlComponents: urlComponents)
       DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
         self.sem?.signal()
       }
-      response.writeHeader(status: .ok)
-      response.writeBody("Success! Token received.\n")
-      response.done()
-      return .discardBody
+      let res = HTTPResponse(body: "Success! Token received.\n")
+      return worker.eventLoop.newSucceededFuture(result: res)
     } else {
-      response.writeHeader(status: .ok)
-      response.writeBody("Unknown request: \(path)\n")
-      response.done()
-      return .discardBody
+      let res = HTTPResponse(body: "Unknown request: \(req.url.path)\n")
+      return worker.eventLoop.newSucceededFuture(result: res)
     }
   }
   
   // StartServer starts a web server that listens on http://localhost:8080.
   // The webserver waits for an oauth code in the three-legged auth flow.
-  private func startServer(sem: DispatchSemaphore) {
+  private func startServer(sem: DispatchSemaphore) throws {
     self.sem = sem
-    let server = HTTPServer()
-    try! server.start(port: 8080, handler: handler)
+    let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
+    self.server = try HTTPServer.start(
+      hostname: "localhost",
+      port: 8080,
+      responder: self,
+      on: group
+      ).wait()
   }
   
   public func signIn() throws {
     let sem = DispatchSemaphore(value: 0)
-    startServer(sem: sem)
-    
+    try startServer(sem: sem)
+
     let sem2 = DispatchSemaphore(value: 0)
     
     let parameters = ["oauth_callback": "http://localhost:8080" + credentials.callback]
@@ -139,7 +143,7 @@ public class BrowserTokenProvider : TokenProvider {
     if let error = error {
       throw error
     }
-    
+
     if let response = response,
       let data = data {
       if response.statusCode != 200 {
@@ -153,8 +157,9 @@ public class BrowserTokenProvider : TokenProvider {
       
       var urlComponents = URLComponents(string: credentials.authorizeURL)!
       urlComponents.queryItems = [URLQueryItem(name: "oauth_token", value: encode(token!.oAuthToken!))]
+      print("opening the url")
       openURL(urlComponents.url!)
-      
+
       _ = sem.wait(timeout: DispatchTime.distantFuture)
       try exchange()
     } else {
