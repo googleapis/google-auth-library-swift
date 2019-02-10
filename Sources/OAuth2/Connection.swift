@@ -44,7 +44,7 @@ public class Connection {
     var request = URLRequest(url: urlComponents.url!)
     request.setValue(authorization, forHTTPHeaderField: "Authorization")
     request.httpMethod = method
-    if method == "POST" {
+    if method == "POST" || method == "PUT" {
       if let body = body {
         request.httpBody = body
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
