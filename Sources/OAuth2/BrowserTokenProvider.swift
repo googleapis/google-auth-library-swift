@@ -14,7 +14,8 @@
 
 import Foundation
 import Dispatch
-import HTTP
+import TinyHTTPServer
+import NIOHTTP1
 
 struct Credentials : Codable {
   let clientID : String
@@ -31,13 +32,12 @@ struct Credentials : Codable {
   }
 }
 
-public class BrowserTokenProvider: TokenProvider, HTTPServerResponder {
+public class BrowserTokenProvider: TokenProvider {
   private var credentials : Credentials
   private var code: Code?
   public var token: Token?
 
   private var sem: DispatchSemaphore?
-  private var server: HTTPServer?
 
   public init?(credentials: String, token tokenfile: String) {
     let path = ProcessInfo.processInfo.environment["HOME"]!
@@ -78,33 +78,27 @@ public class BrowserTokenProvider: TokenProvider, HTTPServerResponder {
     }
   }
 
-  /// See `HTTPServerResponder`.
-  public func respond(to req: HTTPRequest, on worker: Worker) -> Future<HTTPResponse> {
-    if req.url.path == credentials.callback {
-      let urlComponents = URLComponents(string: req.urlString)!
-      self.code = Code(urlComponents: urlComponents)
-      DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
-        self.sem?.signal()
-      }
-      let res = HTTPResponse(body: "Success! Token received.\n")
-      return worker.eventLoop.newSucceededFuture(result: res)
-    } else {
-      let res = HTTPResponse(body: "Unknown request: \(req.url.path)\n")
-      return worker.eventLoop.newSucceededFuture(result: res)
-    }
-  }
-
   // StartServer starts a web server that listens on http://localhost:8080.
   // The webserver waits for an oauth code in the three-legged auth flow.
   private func startServer(sem: DispatchSemaphore) throws {
     self.sem = sem
-    let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
-    self.server = try HTTPServer.start(
-      hostname: "localhost",
-      port: 8080,
-      responder: self,
-      on: group
-      ).wait()
+
+    try TinyHTTPServer().start() { server, request -> (String, HTTPResponseStatus) in
+      if request.uri.unicodeScalars.starts(with:self.credentials.callback.unicodeScalars) {
+        server.stop()
+        if let urlComponents = URLComponents(string: request.uri) {
+          self.code = Code(urlComponents: urlComponents)
+          DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
+            self.sem?.signal()
+          }
+          return ("success! Token received.\n", .ok)
+        } else {
+          return ("failed to get token.\n", .ok)
+        }
+      } else  {
+        return ("not found\n", .notFound)
+      }
+    }
   }
   
   private func exchange() throws -> Token {

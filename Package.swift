@@ -19,20 +19,23 @@ import PackageDescription
 let package = Package(
   name: "Auth",
   products: [
+    .library(name: "TinyHTTPServer", targets: ["TinyHTTPServer"]),
     .library(name: "OAuth1", targets: ["OAuth1"]),
     .library(name: "OAuth2", targets: ["OAuth2"]),
   ],
   dependencies: [
-    .package(url: "https://github.com/vapor/http.git", from: "3.1.7"),
+    .package(url: "https://github.com/apple/swift-nio.git", from: "1.13.0"),
     .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "0.8.0"),
     .package(url: "https://github.com/attaswift/BigInt", from: "3.0.0"),
     .package(url: "https://github.com/timburks/SwiftyBase64", from: "1.2.0"),
   ],
   targets: [
     .target(name: "OAuth1",
-            dependencies: ["CryptoSwift", "HTTP"]),
+            dependencies: ["CryptoSwift", "TinyHTTPServer"]),
     .target(name: "OAuth2",
-            dependencies: ["CryptoSwift", "HTTP", "BigInt", "SwiftyBase64"]),
+            dependencies: ["CryptoSwift", "TinyHTTPServer", "BigInt", "SwiftyBase64"]),
+    .target(name: "TinyHTTPServer",
+	    dependencies: ["NIO", "NIOHTTP1"]),
     .target(name: "TokenSource", dependencies: ["OAuth2"], path: "Sources/Examples/TokenSource"),
     .target(name: "Google",      dependencies: ["OAuth2"], path: "Sources/Examples/Google"),
     .target(name: "GitHub",      dependencies: ["OAuth2"], path: "Sources/Examples/GitHub"),
