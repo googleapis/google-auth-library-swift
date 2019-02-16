@@ -25,11 +25,13 @@ contains examples that illustrate OAuth1 and OAuth2 signin for
 various services. Each requires valid application credentials to run.
 See the various service providers for details.
 
-Services look for OAuth configuration information in "credentials" YAML files
-that are expected to be in `$HOME/.credentials`. Sample credentials
+The BrowserTokenProvider classes use a local web server to implement
+"three-legged OAuth" signin in which users grant permission in a browser
+that a provider's server redirects to the client server with a code.
+These providers look for OAuth configuration information in "credentials"
+YAML files that are expected to be in `$HOME/.credentials`. Sample credentials
 files are in [credentials](credentials)
 and include client IDs, client secrets, and OAuth service URLs.
-
 When OAuth services require registered callback URLs, these should be
 set to `http://localhost:8080/SERVICE/callback` where `SERVICE` is 
 specified in the corresponding credentials YAML file. The temporary 
@@ -37,7 +39,7 @@ web server runs locally on port 8080.
 
 ## Credits
 
-- The local web server is built using [swift-server/http](https://github.com/swift-server/http).
+- The local web server is built using [swift-nio/http](https://github.com/apple/swift-nio).
 - HMAC and SHA1 hashing is performed using [CryptoSwift](https://github.com/krzyzanowskim/CryptoSwift).
 - RSA signing of service account JWT tokens uses [BigInt](https://github.com/attaswift/BigInt).
 
@@ -53,7 +55,7 @@ We'd love to collaborate on this. See [CONTRIBUTING.md](CONTRIBUTING.md) for det
 
 ## Copyright
 
-Copyright 2017, Google Inc.
+Copyright 2019, Google Inc.
 
 ## License
 
