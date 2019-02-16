@@ -33,7 +33,8 @@ public class DefaultTokenProvider : TokenProvider {
       return
     }
     // if $HOME/.config/gcloud/application_default_credentials.json exists,
-    // use it to request an access token.
+    // use it to request an access token and warn the user about possible
+    // problems.
     if let home = ProcessInfo.processInfo.environment["HOME"] {
       let credentialsPath = home + "/.config/gcloud/application_default_credentials.json"
       if FileManager.default.fileExists(atPath:credentialsPath) {
@@ -42,6 +43,14 @@ public class DefaultTokenProvider : TokenProvider {
           return nil
         }
         tokenProvider = provider
+        print("""
+Your application has authenticated using end user credentials from Google
+Cloud SDK. We recommend that most server applications use service accounts
+instead. If your application continues to use end user credentials from Cloud
+SDK, you might receive a "quota exceeded" or "API not enabled" error. For
+more information about service accounts, see
+https://cloud.google.com/docs/authentication/.
+""")
         return
       }
     }
