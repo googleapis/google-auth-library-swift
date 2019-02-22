@@ -82,18 +82,14 @@ public class ServiceAccountTokenProvider : TokenProvider {
     let msg = try JWT.encodeWithRS256(jwtHeader:jwtHeader,
                                       jwtClaimSet:jwtClaimSet,
                                       rsaKey:rsaKey)
-    var urlComponents = URLComponents(string:"")!
-    urlComponents.queryItems =
-      [URLQueryItem(name:"grant_type",
-                    value:"urn:ietf:params:oauth:grant-type:jwt-bearer"),
-       URLQueryItem(name:"assertion",
-                    value:msg)]
-    let query = urlComponents.percentEncodedQuery!
-    
+    let json: [String: Any] = ["grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer",
+                           "assertion": msg]
+    let data = try? JSONSerialization.data(withJSONObject: json)    
+  
     var urlRequest = URLRequest(url:URL(string:credentials.TokenURI)!)
     urlRequest.httpMethod = "POST"
-    urlRequest.httpBody = query.data(using:.utf8)
-    urlRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField:"Content-Type")
+    urlRequest.httpBody = data
+    urlRequest.setValue("application/json", forHTTPHeaderField:"Content-Type")
     
     let session = URLSession(configuration: URLSessionConfiguration.default)
     let task: URLSessionDataTask = session.dataTask(with:urlRequest)
