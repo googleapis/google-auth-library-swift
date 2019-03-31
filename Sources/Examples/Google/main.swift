@@ -40,8 +40,9 @@ fileprivate enum CommandLineOption {
                 self = .translate(text: arguments[2])
             default: return nil
             }
+        } else {
+            return nil
         }
-        return nil
     }
     func stringValue() -> String {
         switch self {
