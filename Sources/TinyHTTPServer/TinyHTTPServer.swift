@@ -31,25 +31,27 @@ public class TinyHTTPServer {
       self.server = server
       self.handler = handler
     }
-    
-    func channelRead(ctx: ChannelHandlerContext, data: NIOAny) {
+
+    func channelRead(context: ChannelHandlerContext, data: NIOAny) {
       switch self.unwrapInboundIn(data) {
       case .head(let request):
         let (response, code) = self.handler(self.server, request)
         // write header of response
-        ctx.writeAndFlush(self.wrapOutboundOut(
+        context.writeAndFlush(self.wrapOutboundOut(
           .head(HTTPResponseHead(version: request.version,
                                  status: code,
                                  headers: HTTPHeaders()))),
-                          promise:nil)
+          promise:nil)
         // write body of response
-        var buf = ctx.channel.allocator.buffer(capacity: response.utf8.count)
-        buf.write(string: response)
-        ctx.writeAndFlush(self.wrapOutboundOut(.body(.byteBuffer(buf))), promise: nil)
+        var buf = context.channel.allocator.buffer(capacity: response.utf8.count)
+        buf.writeString(response)
+        context.writeAndFlush(self.wrapOutboundOut(.body(.byteBuffer(buf))), promise: nil)
         // write end of response
-        let promise : EventLoopPromise<Void> = ctx.eventLoop.newPromise()
-        promise.futureResult.whenComplete { ctx.close(promise: nil) }
-        ctx.writeAndFlush(self.wrapOutboundOut(.end(nil)), promise: promise)
+        let promise : EventLoopPromise<Void> = context.eventLoop.makePromise()
+        promise.futureResult.whenComplete {
+          (_: Result<Void, Error>) in context.close(promise: nil) }
+
+        context.writeAndFlush(self.wrapOutboundOut(.end(nil)), promise: promise)
       default:
         break
       }
@@ -58,7 +60,7 @@ public class TinyHTTPServer {
   
   var channel : Channel!
   var group : MultiThreadedEventLoopGroup!
-  var threadPool : BlockingIOThreadPool!
+  var threadPool : NIOThreadPool!
 
   public init() {
   }
@@ -67,17 +69,18 @@ public class TinyHTTPServer {
     let host = "::1"
     let port = 8080
     self.group = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
-    self.threadPool = BlockingIOThreadPool(numberOfThreads: 1)
+    self.threadPool = NIOThreadPool(numberOfThreads: 1)
     threadPool.start()
     let bootstrap = ServerBootstrap(group: group)
       .serverChannelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
       .childChannelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
       .childChannelOption(ChannelOptions.socket(IPPROTO_TCP, TCP_NODELAY), value: 1)
       .childChannelInitializer { channel in
-        channel.pipeline.configureHTTPServerPipeline(withErrorHandling: true).then {
-          channel.pipeline.add(handler: HTTPHandler(server: self, handler: handler))
+        channel.pipeline.configureHTTPServerPipeline(withErrorHandling: true).flatMap {
+          channel.pipeline.addHandler(HTTPHandler(server: self, handler: handler))
         }
     }
+
     channel = try bootstrap.bind(host: host, port: port).wait()
     if let localAddress = channel.localAddress {
       print("TinyHTTPServer started and listening on \(localAddress).")
