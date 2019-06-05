@@ -38,6 +38,7 @@ The CocoaPods distribution supports iOS-based authentication using Google Cloud 
     "Sources/TokenGenerator/TokenService.swift",
     "Sources/TokenGenerator/ApplicationConstants.swift"
 
+  s.static_framework = true
   s.dependency "CryptoSwift", "~> 1.0.0"
   s.dependency "BigInt", "~> 3.1.0"
   s.dependency "SwiftyBase64", "~> 1.1.1"
