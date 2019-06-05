@@ -15,7 +15,9 @@
 //
 
 import Foundation
-import Firebase
+import FirebaseFunctions
+import FirebaseCore
+import FirebaseAuth
 
 public class TokenService {
 
