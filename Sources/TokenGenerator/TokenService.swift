@@ -25,15 +25,15 @@ public class TokenService {
   static public func authorization(data: [String: String], completionHandler: @escaping (String)-> Void) {
     getToken(data: data) { (token) in
       if !token.isEmpty {
-        completionHandler(ApplicationConstants.tokenType + token)
+        completionHandler(TokenServiceConstants.tokenType + token)
       } else {
-        completionHandler(ApplicationConstants.noTokenError)
+        completionHandler(TokenServiceConstants.noTokenError)
       }
     }
   }
   //This func retrieves tokens from index.js
   static private func retrieveAccessToken(data: [String: String], completionHandler: @escaping (String?, Error?) -> Void) {
-    Functions.functions().httpsCallable(ApplicationConstants.getTokenAPI).call(data, completion: { (result, error) in
+    Functions.functions().httpsCallable(TokenServiceConstants.getTokenAPI).call(data, completion: { (result, error) in
       if error != nil {
         completionHandler(nil, error)
         return
@@ -43,8 +43,8 @@ public class TokenService {
         return
       }
       guard let tokenData = res.data as? [String: Any] else {return}
-      UserDefaults.standard.set(tokenData, forKey: ApplicationConstants.token)
-      if let accessToken = tokenData[ApplicationConstants.accessToken] as? String, !accessToken.isEmpty {
+      UserDefaults.standard.set(tokenData, forKey: TokenServiceConstants.token)
+      if let accessToken = tokenData[TokenServiceConstants.accessToken] as? String, !accessToken.isEmpty {
         completionHandler(accessToken, nil)
       }
 
@@ -54,8 +54,8 @@ public class TokenService {
   //This function compares token expiry date with current date
   //Returns bool value True if the token is expired else false
   static private func isExpired() -> Bool {
-    guard let token = UserDefaults.standard.value(forKey: ApplicationConstants.token) as? [String: String],
-      let expDate = token[ApplicationConstants.expireTime] else{
+    guard let token = UserDefaults.standard.value(forKey: TokenServiceConstants.token) as? [String: String],
+      let expDate = token[TokenServiceConstants.expireTime] else{
         return true
     }
     let dateFormatter = DateFormatter()
@@ -71,7 +71,7 @@ public class TokenService {
   //Return the newly generated token.
 static private func getToken(data: [String: String], completionHandler: @escaping (String)->Void) {
     if isExpired() {
-      NotificationCenter.default.post(name: NSNotification.Name(ApplicationConstants.retreivingToken), object: nil)
+      NotificationCenter.default.post(name: NSNotification.Name(TokenServiceConstants.retreivingToken), object: nil)
       //this sample uses Firebase Auth signInAnonymously and you can insert any auth signin that they offer.
         FirebaseApp.configure()
       Auth.auth().signInAnonymously() { (authResult, error) in
