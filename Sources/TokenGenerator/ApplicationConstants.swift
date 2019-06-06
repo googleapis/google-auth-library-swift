@@ -17,7 +17,7 @@
 import Foundation
 
 //MARK: Token service constants
-struct ApplicationConstants {
+struct TokenServiceConstants {
   static let token = "Token"
   static let accessToken = "accessToken"
   static let expireTime = "expireTime"
