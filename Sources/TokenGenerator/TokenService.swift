@@ -22,8 +22,8 @@ import FirebaseAuth
 public class TokenService {
 
   static let shared = TokenService()
-  static public func authorization(projectID: String, completionHandler: @escaping (String)-> Void) {
-    getToken(projectID: projectID) { (token) in
+  static public func authorization(data: [String: String], completionHandler: @escaping (String)-> Void) {
+    getToken(data: data) { (token) in
       if !token.isEmpty {
         completionHandler(ApplicationConstants.tokenType + token)
       } else {
@@ -32,8 +32,8 @@ public class TokenService {
     }
   }
   //This func retrieves tokens from index.js
-  static private func retrieveAccessToken(projectID: String, completionHandler: @escaping (String?, Error?) -> Void) {
-    Functions.functions().httpsCallable(ApplicationConstants.getTokenAPI).call(projectID, completion: { (result, error) in
+  static private func retrieveAccessToken(data: [String: String], completionHandler: @escaping (String?, Error?) -> Void) {
+    Functions.functions().httpsCallable(ApplicationConstants.getTokenAPI).call(data, completion: { (result, error) in
       if error != nil {
         completionHandler(nil, error)
         return
@@ -69,7 +69,7 @@ public class TokenService {
   //Return token from user defaults if token is there and not expired.
   //Request for new token if token is expired or not there in user defaults.
   //Return the newly generated token.
-static private func getToken(projectID: String, completionHandler: @escaping (String)->Void) {
+static private func getToken(data: [String: String], completionHandler: @escaping (String)->Void) {
     if isExpired() {
       NotificationCenter.default.post(name: NSNotification.Name(ApplicationConstants.retreivingToken), object: nil)
       //this sample uses Firebase Auth signInAnonymously and you can insert any auth signin that they offer.
@@ -80,7 +80,7 @@ static private func getToken(projectID: String, completionHandler: @escaping (St
           completionHandler("")
           return
         }
-        retrieveAccessToken(projectID: projectID, completionHandler: {(token, error) in
+        retrieveAccessToken(data: data, completionHandler: {(token, error) in
           if let token = token {
             NotificationCenter.default.post(name: NSNotification.Name(ApplicationConstants.tokenReceived), object: nil)
             completionHandler(token)
