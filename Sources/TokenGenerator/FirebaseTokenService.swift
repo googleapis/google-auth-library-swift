@@ -31,7 +31,7 @@ struct TokenServiceConstants {
 }
 
 
-public class TokenService {
+public class FirebaseTokenService {
 
   static let shared = TokenService()
   static public func authorization(data: [String: String], completionHandler: @escaping (String)-> Void) {
