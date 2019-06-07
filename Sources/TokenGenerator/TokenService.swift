@@ -19,6 +19,18 @@ import FirebaseFunctions
 import FirebaseCore
 import FirebaseAuth
 
+struct TokenServiceConstants {
+  static let token = "Token"
+  static let accessToken = "accessToken"
+  static let expireTime = "expireTime"
+  static let tokenReceived = "tokenReceived"
+  static let retreivingToken = "RetrievingToken"
+  static let getTokenAPI = "getOAuthToken"
+  static let tokenType = "Bearer "
+  static let noTokenError = "No token is available"
+}
+
+
 public class TokenService {
 
   static let shared = TokenService()
@@ -82,7 +94,7 @@ static private func getToken(data: [String: String], completionHandler: @escapin
         }
         retrieveAccessToken(data: data, completionHandler: {(token, error) in
           if let token = token {
-            NotificationCenter.default.post(name: NSNotification.Name(ApplicationConstants.tokenReceived), object: nil)
+            NotificationCenter.default.post(name: NSNotification.Name(TokenServiceConstants.tokenReceived), object: nil)
             completionHandler(token)
           } else {
             completionHandler("")
@@ -90,8 +102,8 @@ static private func getToken(data: [String: String], completionHandler: @escapin
         })
       }
     } else {
-      guard let token = UserDefaults.standard.value(forKey: ApplicationConstants.token) as? [String: String],
-        let accessToken = token[ApplicationConstants.accessToken] else {
+      guard let token = UserDefaults.standard.value(forKey: TokenServiceConstants.token) as? [String: String],
+        let accessToken = token[TokenServiceConstants.accessToken] else {
           return completionHandler("")
       }
       return completionHandler(accessToken)
