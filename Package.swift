@@ -1,4 +1,4 @@
-// swift-tools-version:4.0
+// swift-tools-version:5.1
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");

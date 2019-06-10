@@ -1,0 +1,34 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "BigInt",
+        "repositoryURL": "https://github.com/attaswift/BigInt",
+        "state": {
+          "branch": null,
+          "revision": "108801d539eb014469c758bc0d7f734690791fb4",
+          "version": "4.0.0"
+        }
+      },
+      {
+        "package": "CryptoSwift",
+        "repositoryURL": "https://github.com/krzyzanowskim/CryptoSwift.git",
+        "state": {
+          "branch": null,
+          "revision": "3a2acbb32ab68215ee1596ee6004da8e90c3721b",
+          "version": "1.0.0"
+        }
+      },
+      {
+        "package": "swift-nio",
+        "repositoryURL": "https://github.com/apple/swift-nio.git",
+        "state": {
+          "branch": null,
+          "revision": "ed50f8a41ece8db20afa8d1188fc0960f95263df",
+          "version": "2.2.0"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
