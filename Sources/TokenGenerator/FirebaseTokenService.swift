@@ -34,8 +34,8 @@ struct TokenServiceConstants {
 public class FirebaseTokenService {
 
   static let shared = FirebaseTokenService()
-  static public func authorization(data: [String: String], completionHandler: @escaping (String)-> Void) {
-    getToken(data: data) { (token) in
+  static public func authorization(completionHandler: @escaping (String)-> Void) {
+    getToken() { (token) in
       if !token.isEmpty {
         completionHandler(TokenServiceConstants.tokenType + token)
       } else {
@@ -44,8 +44,8 @@ public class FirebaseTokenService {
     }
   }
   //This func retrieves tokens from index.js
-  static private func retrieveAccessToken(data: [String: String], completionHandler: @escaping (String?, Error?) -> Void) {
-    Functions.functions().httpsCallable(TokenServiceConstants.getTokenAPI).call(data, completion: { (result, error) in
+  static private func retrieveAccessToken(completionHandler: @escaping (String?, Error?) -> Void) {
+    Functions.functions().httpsCallable(TokenServiceConstants.getTokenAPI).call { (result, error) in
       if error != nil {
         completionHandler(nil, error)
         return
@@ -59,8 +59,7 @@ public class FirebaseTokenService {
       if let accessToken = tokenData[TokenServiceConstants.accessToken] as? String, !accessToken.isEmpty {
         completionHandler(accessToken, nil)
       }
-
-    })
+    }
   }
 
   //This function compares token expiry date with current date
@@ -81,7 +80,7 @@ public class FirebaseTokenService {
   //Return token from user defaults if token is there and not expired.
   //Request for new token if token is expired or not there in user defaults.
   //Return the newly generated token.
-static private func getToken(data: [String: String], completionHandler: @escaping (String)->Void) {
+static private func getToken(completionHandler: @escaping (String)->Void) {
     if isExpired() {
       NotificationCenter.default.post(name: NSNotification.Name(TokenServiceConstants.retreivingToken), object: nil)
       //this sample uses Firebase Auth signInAnonymously and you can insert any auth signin that they offer.
@@ -92,14 +91,14 @@ static private func getToken(data: [String: String], completionHandler: @escapin
           completionHandler("")
           return
         }
-        retrieveAccessToken(data: data, completionHandler: {(token, error) in
+        retrieveAccessToken {(token, error) in
           if let token = token {
             NotificationCenter.default.post(name: NSNotification.Name(TokenServiceConstants.tokenReceived), object: nil)
             completionHandler(token)
           } else {
             completionHandler("")
           }
-        })
+        }
       }
     } else {
       guard let token = UserDefaults.standard.value(forKey: TokenServiceConstants.token) as? [String: String],
