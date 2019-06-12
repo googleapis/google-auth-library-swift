@@ -2,15 +2,14 @@
 
 TokenService swift file demonstrates how to generate auth token using following methods:
 
-## authorization(data: [String: String], completionHandler: @escaping (String)-> Void)
-1.  It's a public function which accepts data dictionary and completion handler as input params.
-2. Data dictionary should contain **projectID**, **scope**, and **tokenCollection** keys and values paired with them. This dictionary will be used by index.js.
-3. Client (iOS app) will call this api by providing these inputs.
-4. This api will call "getToken" private function of TokenService class.
-5. It will call completion handler with either token on success or error message on failure.
+## authorization(completionHandler: @escaping (String)-> Void)
+1.  It's a public function which accepts completion handler as input params.
+2. Client (iOS app) will call this api.
+3. This api will call "getToken" private function of FirebaseTokenService class.
+4. It will call completion handler with either token on success or error message on failure.
  
 
-## retrieveAccessToken(data: [String: String], completionHandler: @escaping (String?, Error?) -> Void)
+## retrieveAccessToken(completionHandler: @escaping (String?, Error?) -> Void)
 1. This is a private function.
 2. This func retrieves tokens from [index.js](https://github.com/GoogleCloudPlatform/nodejs-docs-samples/blob/master/functions/dialogflow/functions/index.js) by calling its "getOAuthToken" api.
 3. On failure it calls completion handler with error message.
@@ -19,7 +18,7 @@ TokenService swift file demonstrates how to generate auth token using following 
 ## isExpired() -> Bool
 1. This is a private function used to validated the token.
 
-##  private func getToken(data: [String: String], completionHandler: @escaping (String)->Void) 
+##  private func getToken(completionHandler: @escaping (String)->Void) 
 1. This will fetch the token from UserDefaults and call the isExpired func to validate it. 
 2. If token is not expired then will call completion handler with the token.
 3. If token is expired then it will:
