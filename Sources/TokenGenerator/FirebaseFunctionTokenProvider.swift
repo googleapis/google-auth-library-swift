@@ -31,20 +31,9 @@ struct TokenServiceConstants {
 }
 
 
-public class FirebaseTokenService {
+public class FirebaseFunctionTokenProvider {
 
-  static let shared = FirebaseTokenService()
-  static public func authorization(completionHandler: @escaping (String)-> Void) {
-    getToken() { (token) in
-      if !token.isEmpty {
-        completionHandler(TokenServiceConstants.tokenType + token)
-      } else {
-        completionHandler(TokenServiceConstants.noTokenError)
-      }
-    }
-  }
-  //This func retrieves tokens from index.js
-  static private func retrieveAccessToken(completionHandler: @escaping (String?, Error?) -> Void) {
+  static private func retrieveAccessToken(completionHandler: @escaping (Token?, Error?) -> Void) {
     Functions.functions().httpsCallable(TokenServiceConstants.getTokenAPI).call { (result, error) in
       if error != nil {
         completionHandler(nil, error)
@@ -55,9 +44,10 @@ public class FirebaseTokenService {
         return
       }
       guard let tokenData = res.data as? [String: Any] else {return}
+      let tokenModel = Token(accessToken: tokenData[TokenServiceConstants.accessToken] as? String)
       UserDefaults.standard.set(tokenData, forKey: TokenServiceConstants.token)
       if let accessToken = tokenData[TokenServiceConstants.accessToken] as? String, !accessToken.isEmpty {
-        completionHandler(accessToken, nil)
+        completionHandler(tokenModel, nil)
       }
     }
   }
@@ -80,32 +70,47 @@ public class FirebaseTokenService {
   //Return token from user defaults if token is there and not expired.
   //Request for new token if token is expired or not there in user defaults.
   //Return the newly generated token.
-static private func getToken(completionHandler: @escaping (String)->Void) {
+  static private func getToken(_ callback: @escaping (Token?, Error?) -> Void) {
     if isExpired() {
       NotificationCenter.default.post(name: NSNotification.Name(TokenServiceConstants.retreivingToken), object: nil)
       //this sample uses Firebase Auth signInAnonymously and you can insert any auth signin that they offer.
-        FirebaseApp.configure()
+      FirebaseApp.configure()
       Auth.auth().signInAnonymously() { (authResult, error) in
         if error != nil {
           //Sign in failed
-          completionHandler("")
+          callback(nil, error)
           return
         }
         retrieveAccessToken {(token, error) in
           if let token = token {
             NotificationCenter.default.post(name: NSNotification.Name(TokenServiceConstants.tokenReceived), object: nil)
-            completionHandler(token)
+            callback(token, nil)
           } else {
-            completionHandler("")
+            callback(nil, error)
           }
         }
       }
     } else {
-      guard let token = UserDefaults.standard.value(forKey: TokenServiceConstants.token) as? [String: String],
-        let accessToken = token[TokenServiceConstants.accessToken] else {
-          return completionHandler("")
+      if let tokenData = UserDefaults.standard.value(forKey: TokenServiceConstants.token) as? [String: String],
+        let accessToken = tokenData[TokenServiceConstants.accessToken] {
+        let tokenModel = Token(accessToken: accessToken)
+        callback(tokenModel, nil)
+      } else {
+        UserDefaults.standard.set(nil, forKey: TokenServiceConstants.token)
+        getToken() { (token, error)  in
+          callback(token, error)
+        }
       }
-      return completionHandler(accessToken)
     }
   }
 }
+
+extension FirebaseFunctionTokenProvider: TokenProvider {
+  public func withToken(_ callback: @escaping (Token?, Error?) -> Void) throws {
+    FirebaseFunctionTokenProvider.getToken() { (token, error)  in
+      callback(token, error)
+    }
+  }
+}
+
+
