@@ -11,7 +11,7 @@ FirebasFunctionTokenProvider swift file demonstrates how to generate auth token 
 
 ## retrieveAccessToken(completionHandler: @escaping (Token?, Error?) -> Void)
 1. This is a private function.
-2. This func retrieves tokens from [index.js]() by calling its "getOAuthToken" api.
+2. This func retrieves tokens from [index.js](https://github.com/google-auth-library-swift/tree/master/Sources/OAuth2/FirebaseFunctionTokenProvider/index.js) by calling its "getOAuthToken" api.
 3. On failure it calls completion handler with error message.
 4. On success it extracts the token data from the response, saves it in the UserDefauts for future reference and calls completionHandler with the token.
 
