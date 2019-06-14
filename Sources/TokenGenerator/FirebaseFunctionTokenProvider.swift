@@ -105,6 +105,7 @@ public class FirebaseFunctionTokenProvider {
   }
 }
 
+//Conforming to TokenProvider protocol
 extension FirebaseFunctionTokenProvider: TokenProvider {
   public func withToken(_ callback: @escaping (Token?, Error?) -> Void) throws {
     FirebaseFunctionTokenProvider.getToken() { (token, error)  in
