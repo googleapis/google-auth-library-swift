@@ -33,6 +33,8 @@ struct TokenServiceConstants {
 
 public class FirebaseFunctionTokenProvider {
 
+  public init () {}
+  
   static private func retrieveAccessToken(completionHandler: @escaping (Token?, Error?) -> Void) {
     Functions.functions().httpsCallable(TokenServiceConstants.getTokenAPI).call { (result, error) in
       if error != nil {
@@ -44,7 +46,7 @@ public class FirebaseFunctionTokenProvider {
         return
       }
       guard let tokenData = res.data as? [String: Any] else {return}
-      let tokenModel = Token(accessToken: tokenData[TokenServiceConstants.accessToken] as? String)
+      let tokenModel = Token(accessToken: "\(TokenServiceConstants.tokenType)\(tokenData[TokenServiceConstants.accessToken] as? String ?? "")" )
       UserDefaults.standard.set(tokenData, forKey: TokenServiceConstants.token)
       if let accessToken = tokenData[TokenServiceConstants.accessToken] as? String, !accessToken.isEmpty {
         completionHandler(tokenModel, nil)
@@ -93,7 +95,7 @@ public class FirebaseFunctionTokenProvider {
     } else {
       if let tokenData = UserDefaults.standard.value(forKey: TokenServiceConstants.token) as? [String: String],
         let accessToken = tokenData[TokenServiceConstants.accessToken] {
-        let tokenModel = Token(accessToken: accessToken)
+        let tokenModel = Token(accessToken: "\(TokenServiceConstants.tokenType)\(accessToken)")
         callback(tokenModel, nil)
       } else {
         UserDefaults.standard.set(nil, forKey: TokenServiceConstants.token)
@@ -105,6 +107,7 @@ public class FirebaseFunctionTokenProvider {
   }
 }
 
+//Conforming to TokenProvider protocol
 extension FirebaseFunctionTokenProvider: TokenProvider {
   public func withToken(_ callback: @escaping (Token?, Error?) -> Void) throws {
     FirebaseFunctionTokenProvider.getToken() { (token, error)  in
