@@ -1,24 +1,24 @@
 # Token generator using firebase functions
 
-TokenService swift file demonstrates how to generate auth token using following methods:
+FirebasFunctionTokenProvider swift file demonstrates how to generate auth token using following methods:
 
-## authorization(completionHandler: @escaping (String)-> Void)
+## withToken(_callback: @escaping (Token?, Error?) -> Void) throws
 1.  It's a public function which accepts completion handler as input params.
 2. Client (iOS app) will call this api.
 3. This api will call "getToken" private function of FirebaseTokenService class.
 4. It will call completion handler with either token on success or error message on failure.
  
 
-## retrieveAccessToken(completionHandler: @escaping (String?, Error?) -> Void)
+## retrieveAccessToken(completionHandler: @escaping (Token?, Error?) -> Void)
 1. This is a private function.
-2. This func retrieves tokens from [index.js](https://github.com/GoogleCloudPlatform/nodejs-docs-samples/blob/master/functions/dialogflow/functions/index.js) by calling its "getOAuthToken" api.
+2. This func retrieves tokens from [index.js]() by calling its "getOAuthToken" api.
 3. On failure it calls completion handler with error message.
 4. On success it extracts the token data from the response, saves it in the UserDefauts for future reference and calls completionHandler with the token.
 
 ## isExpired() -> Bool
 1. This is a private function used to validated the token.
 
-##  private func getToken(completionHandler: @escaping (String)->Void) 
+##  private func getToken(_ callback: @escaping (Token?, Error?) -> Void) 
 1. This will fetch the token from UserDefaults and call the isExpired func to validate it. 
 2. If token is not expired then will call completion handler with the token.
 3. If token is expired then it will:
