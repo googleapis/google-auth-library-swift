@@ -1,30 +1,19 @@
-# Token generator using firebase functions
+# Use Firebase Functions to Securely Obtain Auth Tokens
 
-FirebasFunctionTokenProvider swift file demonstrates how to generate auth token using following methods:
+The FirebaseFunctionTokenProvider allows applications to obtain auth tokens
+using service accounts without storing the service account credentials locally
+within an application. Instead, an app is registered to use Firebase Functions
+and calls a designated function that uses server-side calls to get an
+authorization token from a Firebase Function. 
 
-## withToken(_callback: @escaping (Token?, Error?) -> Void) throws
-1.  It's a public function which accepts completion handler as input params.
-2. Client (iOS app) will call this api.
-3. This api will call "getToken" private function of FirebaseTokenService class.
-4. It will call completion handler with either token on success or error message on failure.
- 
+A sample Firebase Function implementation is in `index.js`. This sample uses
+the Google Cloud Metadata Service to return an auth token associated with the
+service account of the Firebase Function.
 
-## retrieveAccessToken(completionHandler: @escaping (Token?, Error?) -> Void)
-1. This is a private function.
-2. This func retrieves tokens from [index.js](https://github.com/google-auth-library-swift/tree/master/Sources/OAuth2/FirebaseFunctionTokenProvider/index.js) by calling its "getOAuthToken" api.
-3. On failure it calls completion handler with error message.
-4. On success it extracts the token data from the response, saves it in the UserDefauts for future reference and calls completionHandler with the token.
+This class conforms to the `TokenProvider` protocol and provides tokens with
+the following method:
 
-## isExpired() -> Bool
-1. This is a private function used to validated the token.
+```withToken(_callback: @escaping (Token?, Error?) -> Void) throws```
 
-##  private func getToken(_ callback: @escaping (Token?, Error?) -> Void) 
-1. This will fetch the token from UserDefaults and call the isExpired func to validate it. 
-2. If token is not expired then will call completion handler with the token.
-3. If token is expired then it will:
-    - Post notification "retreivingToken" so that client can show the activity indicator.
-    - Anonymous sign in.
-    - Call "retrieveAccessToken" private func to receive token.
-    - On success, Post notification "tokenReceived" and completionHandler with the token.
-    - On failure completionHandler with the error.
+
 
