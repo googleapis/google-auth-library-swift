@@ -34,10 +34,16 @@ The CocoaPods distribution supports iOS-based authentication using Google Cloud 
     "Sources/OAuth2/RSA.swift",
     "Sources/OAuth2/ServiceAccountTokenProvider.swift",
     "Sources/OAuth2/Token.swift",
-    "Sources/OAuth2/TokenProvider.swift"
+    "Sources/OAuth2/TokenProvider.swift",
+    "Sources/OAuth2/FirebaseFunctionTokenProvider/FirebaseFunctionTokenProvider.swift"
 
+  s.static_framework = true
   s.dependency "CryptoSwift", "~> 1.0.0"
   s.dependency "BigInt", "~> 3.1.0"
   s.dependency "SwiftyBase64", "~> 1.1.1"
   s.dependency "SwiftNIO", "2.0.0"
+  s.dependency "Firebase/Core"
+  s.dependency "Firebase/Functions"
+  s.dependency "Firebase/Auth"
+  s.dependency "Firebase/Firestore"
 end

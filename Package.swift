@@ -43,5 +43,9 @@ let package = Package(
     .target(name: "Meetup",      dependencies: ["OAuth2"], path: "Sources/Examples/Meetup"),
     .target(name: "Spotify",     dependencies: ["OAuth2"], path: "Sources/Examples/Spotify"),
     .target(name: "Twitter",     dependencies: ["OAuth1"], path: "Sources/Examples/Twitter"),
-  ]
+  ],
+  exclude: [
+    .exclude(name: "FirebaseFunctionTokenProvider", dependencies: ["OAuth2"], path:
+        "Sources/OAuth2/FirebaseFunctionTokenProvider"),
+    ]
 )
