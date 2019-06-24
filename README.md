@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/googleapis/google-auth-library-swift.svg?branch=master)](https://travis-ci.org/googleapis/google-auth-library-swift)
+
 # Auth Library for Swift
 
 This project contains Swift packages that can be used to write command-line
