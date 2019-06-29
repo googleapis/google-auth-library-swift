@@ -102,5 +102,13 @@ public class FCMTokenProvider {
         UserDefaults.standard.set(tokenData, forKey: TokenServiceConstants.token)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name(TokenServiceConstants.tokenReceived), object: nil)
     }
+    
+    static public func getTokenFromUserDefaults() -> String {
+        guard let tokenData = UserDefaults.standard.value(forKey: TokenServiceConstants.token) as? [String: String],
+            let token = tokenData[TokenServiceConstants.token] else{
+                return "Token is not there in user defaults"
+        }
+        return TokenServiceConstants.tokenType + token
+    }
 }
 
