@@ -27,12 +27,12 @@ The CocoaPods distribution supports iOS-based authentication using Google Cloud 
   s.source = { :git => "https://github.com/google/auth-library-swift.git", :tag => s.version.to_s }
 
   s.source_files =
-    "Sources/OAuth2/ASN1.swift",
     "Sources/OAuth2/Code.swift",
     "Sources/OAuth2/Connection.swift",
-    "Sources/OAuth2/JWT.swift",
-    "Sources/OAuth2/RSA.swift",
-    "Sources/OAuth2/ServiceAccountTokenProvider.swift",
+    "Sources/OAuth2/ServiceAccountTokenProvider/ASN1.swift",
+    "Sources/OAuth2/ServiceAccountTokenProvider/JWT.swift",
+    "Sources/OAuth2/ServiceAccountTokenProvider/RSA.swift",
+    "Sources/OAuth2/ServiceAccountTokenProvider/ServiceAccountTokenProvider.swift",
     "Sources/OAuth2/Token.swift",
     "Sources/OAuth2/TokenProvider.swift",
     "Sources/OAuth2/FirebaseFunctionTokenProvider/FirebaseFunctionTokenProvider.swift"
