@@ -69,7 +69,7 @@ public class FCMTokenProvider {
     static public func getToken(deviceID: String, _ callback: @escaping (_ shouldWait:Bool, _ token: String?, _ error: Error?) -> Void) {
         if isExpired() {
             NotificationCenter.default.post(name: NSNotification.Name(TokenServiceConstants.retreivingToken), object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(tokenReceived(tokenData:)), name: NSNotification.Name(TokenServiceConstants.tokenReceived), object: nil)
+            //NotificationCenter.default.addObserver(self, selector: #selector(tokenReceived(tokenData:)), name: NSNotification.Name(TokenServiceConstants.tokenReceived), object: nil)
             //this sample uses Firebase Auth signInAnonymously and you can insert any auth signin that they offer.
             //FirebaseApp.configure()
             Auth.auth().signInAnonymously() { (authResult, error) in
@@ -98,14 +98,13 @@ public class FCMTokenProvider {
         }
     }
     
-    @objc private func tokenReceived(tokenData: [String: Any]) {
-        UserDefaults.standard.set(tokenData, forKey: TokenServiceConstants.token)
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(TokenServiceConstants.tokenReceived), object: nil)
+    static public func tokenFromAppDelegate(tokenDict: [String: Any]) {
+        UserDefaults.standard.set(tokenDict, forKey: TokenServiceConstants.token)
     }
     
     static public func getTokenFromUserDefaults() -> String {
         guard let tokenData = UserDefaults.standard.value(forKey: TokenServiceConstants.token) as? [String: String],
-            let token = tokenData[TokenServiceConstants.token] else{
+            let token = tokenData[TokenServiceConstants.accessToken] else{
                 return "Token is not there in user defaults"
         }
         return TokenServiceConstants.tokenType + token
