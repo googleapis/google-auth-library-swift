@@ -10,10 +10,3 @@ A sample Firebase Function implementation is in `index.js`. This sample uses
 the Google Cloud Metadata Service to return an auth token associated with the
 service account of the Firebase Function.
 
-This class conforms to the `TokenProvider` protocol and provides tokens with
-the following method:
-
-```withToken(_callback: @escaping (Token?, Error?) -> Void) throws```
-
-
-
