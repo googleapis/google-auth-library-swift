@@ -1,4 +1,4 @@
-// swift-tools-version:4.0
+// swift-tools-version:5.0
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,13 +27,14 @@ let package = Package(
   dependencies: [
     .package(url: "https://github.com/apple/swift-nio.git", from: "2.0.0"),
     .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.0.0"),
-    .package(url: "https://github.com/attaswift/BigInt", from: "3.1.0"),
+    .package(url: "https://github.com/attaswift/BigInt", from: "4.0.0"),
   ],
   targets: [
     .target(name: "OAuth1",
             dependencies: ["CryptoSwift", "TinyHTTPServer"]),
     .target(name: "OAuth2",
-            dependencies: ["CryptoSwift", "TinyHTTPServer", "BigInt", "SwiftyBase64"]),
+            dependencies: ["CryptoSwift", "TinyHTTPServer", "BigInt", "SwiftyBase64"],
+            exclude: ["FirebaseFunctionTokenProvider"]),
     .target(name: "TinyHTTPServer",
 	    dependencies: ["NIO", "NIOHTTP1"]),
     .target(name: "SwiftyBase64"),
