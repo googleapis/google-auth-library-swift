@@ -8,5 +8,7 @@ authorization token from a Firebase Function.
 
 A sample Firebase Function implementation is in `index.js`. This sample uses
 the Google Cloud Metadata Service to return an auth token associated with the
-service account of the Firebase Function.
+service account of the Firebase Function. It triggers push notification with 
+payload (contains token and it's expiry time) along with Device ID via 
+FCM(Firebase Cloud Messaging) which will be received by client.
 

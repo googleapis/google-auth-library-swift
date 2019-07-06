@@ -34,7 +34,7 @@ let package = Package(
             dependencies: ["CryptoSwift", "TinyHTTPServer"]),
     .target(name: "OAuth2",
             dependencies: ["CryptoSwift", "TinyHTTPServer", "BigInt", "SwiftyBase64"],
-            exclude: ["FCMTokenProvider"]),
+            exclude: ["FirebaseFunctionTokenProvider"]),
     .target(name: "TinyHTTPServer",
 	    dependencies: ["NIO", "NIOHTTP1"]),
     .target(name: "SwiftyBase64"),
