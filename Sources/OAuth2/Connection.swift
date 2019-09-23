@@ -15,6 +15,7 @@
 import Foundation
 import Dispatch
 import CryptoSwift
+import FoundationNetworking
 
 public class Connection {
   public var provider: TokenProvider

@@ -14,6 +14,7 @@
 
 import Foundation
 import Dispatch
+import FoundationNetworking
 
 public class GoogleCloudMetadataTokenProvider : TokenProvider {
   public func withToken(_ callback: @escaping (Token?, Error?) -> Void) throws {
