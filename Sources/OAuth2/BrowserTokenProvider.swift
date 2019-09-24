@@ -16,8 +16,9 @@ import Foundation
 import Dispatch
 import TinyHTTPServer
 import NIOHTTP1
+#if os(Linux) && swift(>=5.1)
 import FoundationNetworking
-
+#endif
 struct Credentials : Codable {
   let clientID : String
   let clientSecret : String
