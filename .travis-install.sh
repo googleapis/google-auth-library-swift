@@ -33,7 +33,7 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
 else
   echo "Using downloaded Swift tools."
   # Install swift
-  SWIFT_URL=https://swift.org/builds/swift-5.0-release/ubuntu1404/swift-5.0-RELEASE/swift-5.0-RELEASE-ubuntu14.04.tar.gz
+  SWIFT_URL=https://swift.org/builds/swift-5.1.1-release/ubuntu1404/swift-5.1.1-RELEASE/swift-5.1.1-RELEASE-ubuntu14.04.tar.gz
   echo $SWIFT_URL
   curl -fSsL $SWIFT_URL -o swift.tar.gz
   tar -xzf swift.tar.gz --strip-components=2 --directory=local
