@@ -13,6 +13,9 @@
 // limitations under the License.
 
 import Foundation
+#if os(Linux) && swift(>=5.1)
+import FoundationNetworking
+#endif
 
 struct ServiceAccountCredentials : Codable {
   let CredentialType : String
