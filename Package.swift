@@ -25,9 +25,9 @@ let package = Package(
     .library(name: "SwiftyBase64", targets: ["SwiftyBase64"]),
   ],
   dependencies: [
-    .package(url: "https://github.com/apple/swift-nio.git", from: "2.0.0"),
-    .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.0.0"),
-    .package(url: "https://github.com/attaswift/BigInt", from: "4.0.0"),
+    .package(url: "https://github.com/apple/swift-nio.git", from: "2.9.0"),
+    .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.1.3"),
+    .package(url: "https://github.com/attaswift/BigInt", from: "5.0.0"),
   ],
   targets: [
     .target(name: "OAuth1",
