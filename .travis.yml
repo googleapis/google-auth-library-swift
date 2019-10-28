@@ -27,7 +27,7 @@ cache:
 # Use Ubuntu 14.04
 dist: trusty
 
-osx_image: xcode11.1
+osx_image: xcode11.2
 
 sudo: false
 

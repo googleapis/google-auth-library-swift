@@ -1,6 +1,6 @@
 
 all:	
-	swift build -c release
+	swift build -c debug
 
 project:
 	swift package generate-xcodeproj

@@ -57,7 +57,7 @@ We'd love to collaborate on this. See [CONTRIBUTING.md](CONTRIBUTING.md) for det
 
 ## Copyright
 
-Copyright 2019, Google Inc.
+Copyright 2019, Google LLC.
 
 ## License
 

@@ -1,4 +1,4 @@
-// Copyright 2017 Google Inc. All Rights Reserved.
+// Copyright 2019 Google LLC. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,10 +15,7 @@
 import Foundation
 import OAuth2
 
-let USE_SERVICE_ACCOUNT = false
-let SERVICE_ACCOUNT_CREDENTIALS = ".credentials/service_account.json"
-
-let CLIENT_CREDENTIALS = "google.json"
+let CREDENTIALS = "google.json"
 let TOKEN = "google.json"
 
 fileprivate enum CommandLineOption {
@@ -76,33 +73,16 @@ func main() throws {
                   "https://www.googleapis.com/auth/contacts.readonly",
                   "https://www.googleapis.com/auth/cloud-platform"]
 
-    var tokenProvider : TokenProvider
-    #if os(OSX)
-    tokenProvider = BrowserTokenProvider(credentials:CLIENT_CREDENTIALS, token:TOKEN)!
-    #else
-    tokenProvider = DefaultTokenProvider(scopes:scopes)!
-    #endif
-
-    if USE_SERVICE_ACCOUNT {
-        if #available(OSX 10.12, *) {
-            let homeURL = FileManager.default.homeDirectoryForCurrentUser
-            let credentialsURL = homeURL.appendingPathComponent(SERVICE_ACCOUNT_CREDENTIALS)
-            tokenProvider = ServiceAccountTokenProvider(credentialsURL:credentialsURL,
-                                                        scopes:scopes)!
-        } else {
-            print("This sample requires OSX 10.12 or later.")
-        }
+    guard let browserTokenProvider = BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN) else {
+      print("Unable to create token provider.")
+      return
     }
-
-    let google = try GoogleSession(tokenProvider:tokenProvider)
+    let google = try GoogleSession(tokenProvider:browserTokenProvider)
 
     switch option {
     case .login:
-        #if os(OSX)
-        let browserTokenProvider = tokenProvider as! BrowserTokenProvider
         try browserTokenProvider.signIn(scopes:scopes)
         try browserTokenProvider.saveToken(TOKEN)
-        #endif
     case .me:
         try google.getMe()
     case .people:
@@ -120,5 +100,3 @@ do {
 } catch (let error) {
     print("ERROR: \(error)")
 }
-
-

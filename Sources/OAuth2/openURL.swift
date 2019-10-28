@@ -1,4 +1,4 @@
-// Copyright 2017 Google Inc. All Rights Reserved.
+// Copyright 2019 Google LLC. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,12 +17,36 @@ import Foundation
   import Cocoa
 #endif
 
+private func shell(_ args: String...) -> Int32 {
+  let task = Process()
+  if #available(macOS 10.13, *) {
+    task.executableURL = URL(string: "/usr/bin/env")
+  } else {
+    task.launchPath = "/usr/bin/env"
+  }
+  task.arguments = args
+  if #available(macOS 10.13, *) {
+    do {
+      try task.run()
+    } catch {
+      return -1
+    }
+  } else {
+    task.launch()
+  }
+  task.waitUntilExit()
+  return task.terminationStatus
+}
+
 internal func openURL(_ url: URL) {
   #if os(OSX)
     if !NSWorkspace.shared.open(url) {
       print("default browser could not be opened")
     }
-  #else
-    print("openURL(\(String(describing:url))) is not implemented on this platform.")
+  #else // Linux, tested on Ubuntu
+    let status = shell("xdg-open", String(describing:url))
+    if status != 0 {
+    	print("To continue, please open this URL in your browser: (\(String(describing:url)))")
+    }
   #endif
 }

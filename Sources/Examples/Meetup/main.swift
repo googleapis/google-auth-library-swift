@@ -1,4 +1,4 @@
-// Copyright 2017 Google Inc. All Rights Reserved.
+// Copyright 2019 Google LLC. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,8 +26,11 @@ func main() throws {
     return
   }
   
-  let tokenProvider = BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)!
-  
+  guard let tokenProvider = BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN) else {
+    print("Unable to create token provider.")
+    return
+  }
+
   let meetup = try MeetupSession(tokenProvider:tokenProvider)
   
   if arguments[1] == "login" {
