@@ -15,7 +15,7 @@
 import Foundation
 import OAuth2
 
-let CLIENT_CREDENTIALS = "google.json"
+let CREDENTIALS = "google.json"
 let TOKEN = "google.json"
 
 fileprivate enum CommandLineOption {
@@ -73,12 +73,14 @@ func main() throws {
                   "https://www.googleapis.com/auth/contacts.readonly",
                   "https://www.googleapis.com/auth/cloud-platform"]
 
-    let tokenProvider = BrowserTokenProvider(credentials:CLIENT_CREDENTIALS, token:TOKEN)!
-    let google = try GoogleSession(tokenProvider:tokenProvider)
+    guard let browserTokenProvider = BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN) else {
+      print("Unable to create token provider.")
+      return
+    }
+    let google = try GoogleSession(tokenProvider:browserTokenProvider)
 
     switch option {
     case .login:
-        let browserTokenProvider = tokenProvider as! BrowserTokenProvider
         try browserTokenProvider.signIn(scopes:scopes)
         try browserTokenProvider.saveToken(TOKEN)
     case .me:

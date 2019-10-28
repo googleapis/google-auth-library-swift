@@ -25,8 +25,11 @@ func main() throws {
     print("Usage: \(arguments[0]) [options]")
     return
   }
-  
-  let tokenProvider = BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)!
+
+  guard let tokenProvider = BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN) else {
+    print("Unable to create token provider.")
+    return
+  }  
   
   let github = try GitHubSession(tokenProvider:tokenProvider)
   

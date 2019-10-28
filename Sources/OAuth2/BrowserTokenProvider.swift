@@ -1,4 +1,4 @@
-// Copyright 2017 Google Inc. All Rights Reserved.
+// Copyright 2019 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,30 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Foundation
 import Dispatch
-import TinyHTTPServer
+import Foundation
 import NIOHTTP1
-#if os(Linux) && swift(>=5.1)
-import FoundationNetworking
+import TinyHTTPServer
+#if canImport(FoundationNetworking)
+  import FoundationNetworking
 #endif
-struct Credentials : Codable {
-  let clientID : String
-  let clientSecret : String
-  let authorizeURL : String
-  let accessTokenURL : String
-  let callback : String
+
+struct Credentials: Codable {
+  let clientID: String
+  let clientSecret: String
+  let authorizeURL: String
+  let accessTokenURL: String
+  let callback: String
   enum CodingKeys: String, CodingKey {
     case clientID = "client_id"
     case clientSecret = "client_secret"
     case authorizeURL = "authorize_url"
     case accessTokenURL = "access_token_url"
-    case callback = "callback"
+    case callback
   }
 }
 
 public class BrowserTokenProvider: TokenProvider {
-  private var credentials : Credentials
+  private var credentials: Credentials
   private var code: Code?
   public var token: Token?
 
@@ -44,28 +45,28 @@ public class BrowserTokenProvider: TokenProvider {
   public init?(credentials: String, token tokenfile: String) {
     let path = ProcessInfo.processInfo.environment["HOME"]!
       + "/.credentials/" + credentials
-    let url = URL(fileURLWithPath:path)
-    
-    guard let credentialsData = try? Data(contentsOf:url) else {
-      print("No credentials data at \(path)")
+    let url = URL(fileURLWithPath: path)
+
+    guard let credentialsData = try? Data(contentsOf: url) else {
+      print("No credentials data at \(path).")
       return nil
     }
     let decoder = JSONDecoder()
     guard let credentials = try? decoder.decode(Credentials.self,
                                                 from: credentialsData)
-      else {
-        print("Error reading credentials")
-        return nil
+    else {
+      print("Error reading credentials")
+      return nil
     }
     self.credentials = credentials
-    
+
     if tokenfile != "" {
       do {
         let data = try Data(contentsOf: URL(fileURLWithPath: tokenfile))
         let decoder = JSONDecoder()
         guard let token = try? decoder.decode(Token.self, from: data)
-          else {
-            throw AuthError.unknownError
+        else {
+          return nil
         }
         self.token = token
       } catch {
@@ -73,7 +74,7 @@ public class BrowserTokenProvider: TokenProvider {
       }
     }
   }
-  
+
   public func saveToken(_ filename: String) throws {
     if let token = token {
       try token.save(filename)
@@ -85,8 +86,8 @@ public class BrowserTokenProvider: TokenProvider {
   private func startServer(sem: DispatchSemaphore) throws {
     self.sem = sem
 
-    try TinyHTTPServer().start() { server, request -> (String, HTTPResponseStatus) in
-      if request.uri.unicodeScalars.starts(with:self.credentials.callback.unicodeScalars) {
+    try TinyHTTPServer().start { server, request -> (String, HTTPResponseStatus) in
+      if request.uri.unicodeScalars.starts(with: self.credentials.callback.unicodeScalars) {
         server.stop()
         if let urlComponents = URLComponents(string: request.uri) {
           self.code = Code(urlComponents: urlComponents)
@@ -97,12 +98,12 @@ public class BrowserTokenProvider: TokenProvider {
         } else {
           return ("failed to get token.\n", .ok)
         }
-      } else  {
+      } else {
         return ("not found\n", .notFound)
       }
     }
   }
-  
+
   private func exchange() throws -> Token {
     let sem = DispatchSemaphore(value: 0)
     let parameters = [
@@ -111,7 +112,7 @@ public class BrowserTokenProvider: TokenProvider {
       "grant_type": "authorization_code",
       "code": code!.code!,
       "redirect_uri": "http://localhost:8080" + credentials.callback,
-      ]
+    ]
     let token = credentials.clientID + ":" + credentials.clientSecret
     // some providers require the client id and secret in the authorization header
     let authorization = "Basic " + String(data: token.data(using: .utf8)!.base64EncodedData(), encoding: .utf8)!
@@ -122,32 +123,46 @@ public class BrowserTokenProvider: TokenProvider {
       urlString: credentials.accessTokenURL,
       parameters: parameters,
       body: nil,
-      authorization: authorization) { data, response, _ in
-        if let c = (response as? HTTPURLResponse)!.allHeaderFields["Content-Type"] {
-          contentType = c as? String
+      authorization: authorization
+    ) { data, response, _ in
+      if let response = response as? HTTPURLResponse {
+        for (k, v) in response.allHeaderFields {
+          // Explicitly-lowercasing seems like it should be unnecessary,
+          // but some services returned "Content-Type" and others sent "content-type".
+          if (k as! String).lowercased() == "content-type" {
+            contentType = v as? String
+          }
         }
-        responseData = data
-        sem.signal()
+      }
+      responseData = data
+      sem.signal()
     }
     _ = sem.wait(timeout: DispatchTime.distantFuture)
-    if contentType != nil && contentType!.contains("application/json") {
-      
+    if let contentType = contentType, contentType.contains("application/json") {
       let decoder = JSONDecoder()
       let token = try! decoder.decode(Token.self, from: responseData!)
       return token
     } else { // assume "application/x-www-form-urlencoded"
-      let urlComponents = URLComponents(string: "http://example.com?" + String(data: responseData!, encoding: .utf8)!)!
+      guard let responseData = responseData else {
+        throw AuthError.unknownError
+      }
+      guard let queryParameters = String(data: responseData, encoding: .utf8) else {
+        throw AuthError.unknownError
+      }
+      guard let urlComponents = URLComponents(string: "http://example.com?" + queryParameters) else {
+        throw AuthError.unknownError
+      }
       return Token(urlComponents: urlComponents)
     }
   }
-  
+
   public func signIn(scopes: [String]) throws {
     let sem = DispatchSemaphore(value: 0)
     try startServer(sem: sem)
-    
+
     let state = UUID().uuidString
     let scope = scopes.joined(separator: " ")
-    
+
     var urlComponents = URLComponents(string: credentials.authorizeURL)!
     urlComponents.queryItems = [
       URLQueryItem(name: "client_id", value: credentials.clientID),
@@ -161,7 +176,7 @@ public class BrowserTokenProvider: TokenProvider {
     _ = sem.wait(timeout: DispatchTime.distantFuture)
     token = try exchange()
   }
-  
+
   public func withToken(_ callback: @escaping (Token?, Error?) -> Void) throws {
     callback(token, nil)
   }

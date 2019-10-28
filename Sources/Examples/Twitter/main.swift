@@ -26,7 +26,10 @@ func main() throws {
     return
   }
   
-  let tokenProvider = try BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)!
+  guard let tokenProvider = BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN) else {
+    print("Unable to create token provider.")
+    return
+  }
   
   let twitter = try TwitterSession(tokenProvider:tokenProvider)
   

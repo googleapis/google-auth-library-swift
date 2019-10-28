@@ -26,8 +26,11 @@ func main() throws {
     return
   }
   
-  let tokenProvider = BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN)!
-  
+  guard let tokenProvider = BrowserTokenProvider(credentials:CREDENTIALS, token:TOKEN) else {
+    print("Unable to create token provider.")
+    return
+  }
+
   let meetup = try MeetupSession(tokenProvider:tokenProvider)
   
   if arguments[1] == "login" {
