@@ -90,8 +90,6 @@ public class TinyHTTPServer {
   public func stop() {
     MultiThreadedEventLoopGroup.currentEventLoop!.scheduleTask(in: .seconds(0)) {
       _ = self.channel.close()
-      try! self.group.syncShutdownGracefully()
-      try! self.threadPool.syncShutdownGracefully()
       print("TinyHTTPServer stopped.")
     }
   }
