@@ -13,8 +13,8 @@
 // limitations under the License.
 
 import Foundation
-#if os(Linux) && swift(>=5.1)
-import FoundationNetworking
+#if canImport(FoundationNetworking)
+  import FoundationNetworking
 #endif
 
 struct ServiceAccountCredentials : Codable {

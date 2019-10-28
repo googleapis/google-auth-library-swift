@@ -13,11 +13,11 @@
 // limitations under the License.
 
 import Foundation
+#if canImport(FoundationNetworking)
+  import FoundationNetworking
+#endif
 import Dispatch
 import CryptoSwift
-#if os(Linux) && swift(>=5.1)
-import FoundationNetworking
-#endif
 
 public class Connection {
   

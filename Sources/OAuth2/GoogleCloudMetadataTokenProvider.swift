@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Foundation
 import Dispatch
-#if os(Linux) && swift(>=5.1)
-import FoundationNetworking
+import Foundation
+#if canImport(FoundationNetworking)
+  import FoundationNetworking
 #endif
 
 public class GoogleCloudMetadataTokenProvider : TokenProvider {
