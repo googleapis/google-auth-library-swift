@@ -18,16 +18,24 @@ import Foundation
 #endif
 
 private func shell(_ args: String...) -> Int32 {
-    let task = Process()
-    task.executableURL = URL(string:"/usr/bin/env")
-    task.arguments = args
+  let task = Process()
+  if #available(macOS 10.13, *) {
+    task.executableURL = URL(string: "/usr/bin/env")
+  } else {
+    task.launchPath = "/usr/bin/env"
+  }
+  task.arguments = args
+  if #available(macOS 10.13, *) {
     do {
-        try task.run()
+      try task.run()
     } catch {
-        return -1
+      return -1
     }
-    task.waitUntilExit()
-    return task.terminationStatus
+  } else {
+    task.launch()
+  }
+  task.waitUntilExit()
+  return task.terminationStatus
 }
 
 internal func openURL(_ url: URL) {
