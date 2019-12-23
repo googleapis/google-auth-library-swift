@@ -15,8 +15,11 @@
 import Foundation
 #if os(OSX)
   import Cocoa
+#elseif os(iOS) || os(tvOS)
+  import UIKit
 #endif
 
+#if !(os(iOS) || os(tvOS))
 private func shell(_ args: String...) -> Int32 {
   let task = Process()
   if #available(macOS 10.13, *) {
@@ -37,11 +40,19 @@ private func shell(_ args: String...) -> Int32 {
   task.waitUntilExit()
   return task.terminationStatus
 }
+#endif
 
+@available(iOS 10.0, tvOS 10.0, *)
 internal func openURL(_ url: URL) {
   #if os(OSX)
     if !NSWorkspace.shared.open(url) {
       print("default browser could not be opened")
+    }
+  #elseif os(iOS) || os(tvOS)
+    UIApplication.shared.open(url) { success in
+        if !success {
+            print("default browser could not be opened")
+        }
     }
   #else // Linux, tested on Ubuntu
     let status = shell("xdg-open", String(describing:url))
