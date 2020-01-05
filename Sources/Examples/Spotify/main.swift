@@ -31,7 +31,7 @@ func main() throws {
     return
   }
   
-  let spotify = try SpotifySession(tokenProvider:tokenProvider)
+  let spotify = SpotifySession(tokenProvider:tokenProvider)
   
   if arguments[1] == "login" {
     try tokenProvider.signIn(scopes:["playlist-read-private",

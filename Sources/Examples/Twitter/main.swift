@@ -31,7 +31,7 @@ func main() throws {
     return
   }
   
-  let twitter = try TwitterSession(tokenProvider:tokenProvider)
+  let twitter = TwitterSession(tokenProvider:tokenProvider)
   
   if arguments[1] == "login" {
     try tokenProvider.signIn()

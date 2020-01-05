@@ -19,8 +19,8 @@ import OAuth1
 class TwitterSession {
   public var connection : Connection
   
-  init(tokenProvider: TokenProvider) throws{
-    connection = try Connection(provider:tokenProvider)
+  init(tokenProvider: TokenProvider) {
+    connection = Connection(provider:tokenProvider)
   }
   
   func getTweets() throws {

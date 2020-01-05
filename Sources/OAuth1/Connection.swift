@@ -23,7 +23,7 @@ public class Connection {
   
   public var provider : TokenProvider
   
-  public init(provider : TokenProvider) throws {
+  public init(provider : TokenProvider) {
     self.provider = provider
   }
   
