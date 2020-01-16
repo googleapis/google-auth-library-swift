@@ -77,7 +77,7 @@ func main() throws {
       print("Unable to create token provider.")
       return
     }
-    let google = try GoogleSession(tokenProvider:browserTokenProvider)
+    let google = GoogleSession(tokenProvider:browserTokenProvider)
 
     switch option {
     case .login:

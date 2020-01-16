@@ -31,7 +31,7 @@ func main() throws {
     return
   }
 
-  let meetup = try MeetupSession(tokenProvider:tokenProvider)
+  let meetup = MeetupSession(tokenProvider:tokenProvider)
   
   if arguments[1] == "login" {
     try tokenProvider.signIn(scopes:["basic", "ageless"])

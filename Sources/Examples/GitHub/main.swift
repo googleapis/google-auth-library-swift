@@ -31,7 +31,7 @@ func main() throws {
     return
   }  
   
-  let github = try GitHubSession(tokenProvider:tokenProvider)
+  let github = GitHubSession(tokenProvider:tokenProvider)
   
   if arguments[1] == "login" {
     try tokenProvider.signIn(scopes:["user"])
