@@ -111,6 +111,7 @@ public class BrowserTokenProvider: TokenProvider {
     }
   }
 
+  @available(iOS 10.0, tvOS 10.0, *)
   public func signIn() throws {
     let sem = DispatchSemaphore(value: 0)
     try startServer(sem: sem)
