@@ -18,6 +18,9 @@ import PackageDescription
 
 let package = Package(
   name: "Auth",
+  platforms: [
+    .macOS(.v10_12), .iOS(.v9), .tvOS(.v9)
+  ],
   products: [
     .library(name: "OAuth1", targets: ["OAuth1"]),
     .library(name: "OAuth2", targets: ["OAuth2"]),
