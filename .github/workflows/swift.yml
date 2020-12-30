@@ -1,0 +1,35 @@
+name: Swift
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build-ubuntu:
+    runs-on: ubuntu-18.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Install Swift
+      run: |
+        SWIFT_URL=https://swift.org/builds/swift-5.1.1-release/ubuntu1404/swift-5.1.1-RELEASE/swift-5.1.1-RELEASE-ubuntu14.04.tar.gz
+        curl -fSsL $SWIFT_URL -o swift.tar.gz
+        sudo tar -xzf swift.tar.gz --strip-components=2 --directory=/usr/local
+        which swift
+    - name: Build
+      run: |
+        swift package -v resolve
+        make all
+
+  build-macos:
+    runs-on: macOS-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Build
+        run: |
+          swift package -v resolve
+          make all
