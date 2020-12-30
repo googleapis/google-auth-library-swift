@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/googleapis/google-auth-library-swift.svg?branch=master)](https://travis-ci.org/googleapis/google-auth-library-swift)
+[![Swift Actions Status](https://github.com/googleapis/google-auth-library-swift/workflows/Swift/badge.svg)](https://github.com/googleapis/google-auth-library-swift/actions)
 
 # Auth Library for Swift
 
