@@ -7,17 +7,17 @@ tools and cloud services that use OAuth to authenticate and authorize access
 to remote services.
 
 Currently these packages support OAuth1 and OAuth2.
-They are designed to work on OS X systems and on Linux systems that are
+They are designed to work on macOS systems and on Linux systems that are
 running in the [Google Cloud](https://cloud.google.com).
 
-* On OS X systems, OAuth tokens can be obtained using the locally-installed
+* On macOS systems, OAuth tokens can be obtained using the locally-installed
 browser and a local web server that is automatically run in the
 command-line client. 
 
 * On Linux systems, OAuth tokens can be obtained automatically from the
 [Google Cloud Metadata Service](https://cloud.google.com/compute/docs/storing-retrieving-metadata).
 
-* On both Linux and OS X systems, OAuth tokens can be obtained automatically for
+* On both Linux and macOS systems, OAuth tokens can be obtained automatically for
 [Google Cloud Service Accounts](https://cloud.google.com/iam/docs/understanding-service-accounts).
 
 ## Usage and Examples
