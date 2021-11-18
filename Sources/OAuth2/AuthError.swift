@@ -13,6 +13,7 @@
 // limitations under the License.
 import Foundation
 
-enum AuthError: Error {
+public enum AuthError: Error {
   case unknownError
+  case webSession(inner: Error)
 }
