@@ -42,7 +42,7 @@ public class BrowserTokenProvider: TokenProvider {
 
   private var sem: DispatchSemaphore?
 
-  public init?(credentials: String, token tokenfile: String) {
+  public convenience init?(credentials: String, token tokenfile: String) {
     let path = ProcessInfo.processInfo.environment["HOME"]!
       + "/.credentials/" + credentials
     let url = URL(fileURLWithPath: path)
@@ -51,9 +51,13 @@ public class BrowserTokenProvider: TokenProvider {
       print("No credentials data at \(path).")
       return nil
     }
+    self.init(credentials: credentialsData, token: tokenfile)
+  }
+
+  public init?(credentials: Data, token tokenfile: String) {
     let decoder = JSONDecoder()
     guard let credentials = try? decoder.decode(Credentials.self,
-                                                from: credentialsData)
+                                                from: credentials)
     else {
       print("Error reading credentials")
       return nil
