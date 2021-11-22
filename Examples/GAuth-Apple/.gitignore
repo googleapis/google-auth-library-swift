@@ -1,0 +1,23 @@
+## User settings
+xcuserdata/
+
+## Code signing
+*.cer
+*.mobileprovision
+*.provisionprofile
+
+## App packaging
+*.app
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+## Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+# Swift Package Manager
+.build/
+
+# Finder excrement
+.DS_Store

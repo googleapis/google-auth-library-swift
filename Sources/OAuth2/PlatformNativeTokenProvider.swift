@@ -29,7 +29,7 @@ struct NativeCredentials: Codable, CodeExchangeInfo {
     case callbackScheme = "callback_scheme"
   }
   var redirectURI: String {
-    callbackScheme + ":/google/callback"
+    callbackScheme + ":/oauth2redirect"
   }
   var clientSecret: String {
     ""
@@ -39,7 +39,7 @@ struct NativeCredentials: Codable, CodeExchangeInfo {
 @available(macOS 10.15.4, iOS 13.4, *)
 public class PlatformNativeTokenProvider: TokenProvider {
   private var credentials: NativeCredentials
-  private var session: ASWebAuthenticationSession?
+  private var session: Session?
   public var token: Token?
 
   // for parity with BrowserTokenProvider
@@ -86,6 +86,11 @@ public class PlatformNativeTokenProvider: TokenProvider {
     }
   }
 
+  private struct Session {
+    let webAuthSession: ASWebAuthenticationSession
+    let webAuthContext: ASWebAuthenticationPresentationContextProviding
+  }
+
   // The presentation context provides a reference to a UIWindow that the auth
   // framework uese to display the confirmation modal and sign in controller.
   public func signIn(
@@ -102,7 +107,6 @@ public class PlatformNativeTokenProvider: TokenProvider {
       URLQueryItem(name: "redirect_uri", value: credentials.redirectURI),
       URLQueryItem(name: "state", value: state),
       URLQueryItem(name: "scope", value: scope),
-      URLQueryItem(name: "show_dialog", value: "false"),
     ]
 
     let session = ASWebAuthenticationSession(
@@ -142,12 +146,12 @@ public class PlatformNativeTokenProvider: TokenProvider {
       // weak ref internally), or the session was previously started, ignore.
       return
     }
-    self.session = session
+    self.session = Session(webAuthSession: session, webAuthContext: context)
   }
 
   // Canceling the session dismisses the view controller if it is showing.
   public func cancelSignIn() {
-    session?.cancel()
+    session?.webAuthSession.cancel()
     self.session = nil
   }
 
