@@ -73,6 +73,13 @@ public class ServiceAccountTokenProvider : TokenProvider {
   }
   
   public func withToken(_ callback:@escaping (Token?, Error?) -> Void) throws {
+
+    // leave spare at least one second :)
+    if let token = token, token.timeToExpiry() > 1 {
+      callback(token, nil)
+      return
+    }
+  
     let iat = Date()
     let exp = iat.addingTimeInterval(3600)
     let jwtClaimSet = JWTClaimSet(Issuer:credentials.ClientEmail,
@@ -100,6 +107,8 @@ public class ServiceAccountTokenProvider : TokenProvider {
       let decoder = JSONDecoder()
       if let data = data,
         let token = try? decoder.decode(Token.self, from: data) {
+        self.token = token
+        self.token?.CreationTime = Date()
         callback(token, error)
       } else {
         callback(nil, error)
