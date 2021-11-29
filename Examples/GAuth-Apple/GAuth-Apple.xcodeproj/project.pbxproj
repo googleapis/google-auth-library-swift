@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		70083F5527556FDB007195C3 /* GAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70083F5427556FDB007195C3 /* GAuth.swift */; };
+		70083F5627556FDB007195C3 /* GAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70083F5427556FDB007195C3 /* GAuth.swift */; };
 		705A071027445B9800BEF60A /* GoogleAPIRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 705A070F27445B9800BEF60A /* GoogleAPIRuntime */; };
 		705A071227445C0B00BEF60A /* GoogleAPIRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 705A071127445C0B00BEF60A /* GoogleAPIRuntime */; };
 		705A071827471D6B00BEF60A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70988A3927443D2E001F41D6 /* ContentView.swift */; };
@@ -38,6 +40,7 @@
 
 /* Begin PBXFileReference section */
 		70083F53274C5A15007195C3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		70083F5427556FDB007195C3 /* GAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GAuth.swift; sourceTree = "<group>"; };
 		705A071B27486E7900BEF60A /* .. */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ..; path = ../..; sourceTree = "<group>"; };
 		705A071C274C184600BEF60A /* WindowAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAccessor.swift; sourceTree = "<group>"; };
 		705A071E274C18CF00BEF60A /* WindowAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAccessor.swift; sourceTree = "<group>"; };
@@ -146,6 +149,7 @@
 				70988A3927443D2E001F41D6 /* ContentView.swift */,
 				709889F92742F778001F41D6 /* GAuthDemoApp.swift */,
 				70988A082743037E001F41D6 /* gmailv1.swift */,
+				70083F5427556FDB007195C3 /* GAuth.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -271,6 +275,7 @@
 				705A071827471D6B00BEF60A /* ContentView.swift in Sources */,
 				705A071F274C18CF00BEF60A /* WindowAccessor.swift in Sources */,
 				709889FA2742F778001F41D6 /* GAuthDemoApp.swift in Sources */,
+				70083F5527556FDB007195C3 /* GAuth.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -282,6 +287,7 @@
 				705A071927471DC700BEF60A /* GAuthDemoApp.swift in Sources */,
 				705A071D274C184600BEF60A /* WindowAccessor.swift in Sources */,
 				70988A3A27443D2E001F41D6 /* ContentView.swift in Sources */,
+				70083F5627556FDB007195C3 /* GAuth.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
