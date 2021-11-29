@@ -42,6 +42,12 @@ struct ContentView: View {
         Text("Login Native")
       }
       Spacer()
+      Button {
+        token_cache_clear()
+      } label: {
+        Text("Clear Token Cache")
+      }
+
     }
     .padding()
     .background(WindowAccessor(window: $window))

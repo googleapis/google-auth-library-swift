@@ -40,7 +40,7 @@
 
 /* Begin PBXFileReference section */
 		70083F53274C5A15007195C3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		70083F5427556FDB007195C3 /* GAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GAuth.swift; sourceTree = "<group>"; };
+		70083F5427556FDB007195C3 /* GAuth.swift */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = GAuth.swift; sourceTree = "<group>"; tabWidth = 2; };
 		705A071B27486E7900BEF60A /* .. */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ..; path = ../..; sourceTree = "<group>"; };
 		705A071C274C184600BEF60A /* WindowAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAccessor.swift; sourceTree = "<group>"; };
 		705A071E274C18CF00BEF60A /* WindowAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAccessor.swift; sourceTree = "<group>"; };

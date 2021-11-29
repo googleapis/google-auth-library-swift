@@ -57,11 +57,20 @@ let creds_browser = """
 
 func oauth2_browser() {
   let cdata = creds_browser.data(using: .utf8)!
-  guard let tp = BrowserTokenProvider(credentials: cdata, token: "")
+  let tfile = token_cache_url()?.path ?? ""
+  guard let tp = BrowserTokenProvider(credentials: cdata, token: tfile)
   else {
     print("error creating browser token provider")
     return
   }
+
+  if tp.token != nil {
+    print("using existing token")
+    query_gmail(tp)
+    return
+  }
+
+  print("requesting new token")
   do {
     let readonly = "https://www.googleapis.com/auth/gmail.readonly"
     try tp.signIn(scopes: [readonly])
@@ -69,6 +78,7 @@ func oauth2_browser() {
     print("error signing in: \(e)")
     return
   }
+  try! tp.saveToken(tfile)
 
   query_gmail(tp)
 }
@@ -87,17 +97,26 @@ let creds_native = """
 
 func oauth2_native(anchor a: ASPresentationAnchor) {
   let cdata = creds_native.data(using: .utf8)!
-  guard let tp = PlatformNativeTokenProvider(credentials: cdata, token: "")
+  let tfile = token_cache_url()?.path ?? ""
+  guard let tp = PlatformNativeTokenProvider(credentials: cdata, token: tfile)
   else {
-    print("error creating browser token provider")
+    print("error creating native token provider")
     return
   }
-  let readonly = "https://www.googleapis.com/auth/gmail.readonly"
 
+  if tp.token != nil {
+    print("using existing token")
+    query_gmail(tp)
+    return
+  }
+
+  print("requesting new token")
   let ctx = AuthContext(anchor: a)
+  let readonly = "https://www.googleapis.com/auth/gmail.readonly"
   tp.signIn(scopes: [readonly], context: ctx) {
     if let token = $0 {
       print("token: \(token)")
+      try! tp.saveToken(tfile)
       query_gmail(tp)
     } else {
       print("error signing in: \($1!)")
@@ -136,5 +155,17 @@ func query_gmail(_ tp: TokenProvider) {
     }
   } catch let e {
     print("error listing messages: \(e)")
+  }
+}
+
+func token_cache_url() -> URL? {
+  FileManager.default
+    .urls(for: .cachesDirectory, in: .userDomainMask).first?
+    .appendingPathComponent("gauth-token.json")
+}
+
+func token_cache_clear() {
+  if let url = token_cache_url() {
+    try? FileManager.default.removeItem(at: url)
   }
 }
