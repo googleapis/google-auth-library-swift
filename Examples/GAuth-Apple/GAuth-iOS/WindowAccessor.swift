@@ -1,4 +1,4 @@
-// Copyright 2019 Google LLC. All Rights Reserved.
+// Copyright 2021 Google LLC. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,9 +11,19 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-import Foundation
 
-public enum AuthError: Error {
-  case unknownError
-  case webSession(inner: Error)
+import SwiftUI
+
+struct WindowAccessor: UIViewRepresentable {
+  @Binding var window: UIWindow?
+
+  func makeUIView(context: Context) -> UIView {
+    let view = UIView()
+    DispatchQueue.main.async {
+      self.window = view.window   // << right after inserted in window
+    }
+    return view
+  }
+
+  func updateUIView(_ uiView: UIView, context: Context) {}
 }

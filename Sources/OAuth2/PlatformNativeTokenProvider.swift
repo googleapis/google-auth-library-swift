@@ -1,4 +1,4 @@
-// Copyright 2019 Google LLC. All Rights Reserved.
+// Copyright 2021 Google LLC. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,39 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if os(macOS) || os(iOS)
 import Dispatch
 import Foundation
-#if canImport(FoundationNetworking)
-  import FoundationNetworking
-#endif
-import NIOHTTP1
-import TinyHTTPServer
+import AuthenticationServices
 
-struct Credentials: Codable, CodeExchangeInfo {
+struct NativeCredentials: Codable, CodeExchangeInfo {
   let clientID: String
-  let clientSecret: String
   let authorizeURL: String
   let accessTokenURL: String
-  let callback: String
+  let callbackScheme: String
   enum CodingKeys: String, CodingKey {
     case clientID = "client_id"
-    case clientSecret = "client_secret"
     case authorizeURL = "authorize_url"
     case accessTokenURL = "access_token_url"
-    case callback
+    case callbackScheme = "callback_scheme"
   }
   var redirectURI: String {
-    "http://localhost:8080" + self.callback
+    callbackScheme + ":/oauth2redirect"
+  }
+  var clientSecret: String {
+    ""
   }
 }
 
-public class BrowserTokenProvider: TokenProvider {
-  private var credentials: Credentials
-  private var code: Code?
+@available(macOS 10.15.4, iOS 13.4, *)
+public class PlatformNativeTokenProvider: TokenProvider {
+  private var credentials: NativeCredentials
+  private var session: Session?
   public var token: Token?
 
-  private var sem: DispatchSemaphore?
-
+  // for parity with BrowserTokenProvider
   public convenience init?(credentials: String, token tokenfile: String) {
     let path = ProcessInfo.processInfo.environment["HOME"]!
       + "/.credentials/" + credentials
@@ -59,7 +57,7 @@ public class BrowserTokenProvider: TokenProvider {
 
   public init?(credentials: Data, token tokenfile: String) {
     let decoder = JSONDecoder()
-    guard let credentials = try? decoder.decode(Credentials.self,
+    guard let credentials = try? decoder.decode(NativeCredentials.self,
                                                 from: credentials)
     else {
       print("Error reading credentials")
@@ -88,37 +86,20 @@ public class BrowserTokenProvider: TokenProvider {
     }
   }
 
-  // StartServer starts a web server that listens on http://localhost:8080.
-  // The webserver waits for an oauth code in the three-legged auth flow.
-  private func startServer(sem: DispatchSemaphore) throws {
-    self.sem = sem
-
-    try TinyHTTPServer().start { server, request -> (String, HTTPResponseStatus) in
-      if request.uri.unicodeScalars.starts(with: self.credentials.callback.unicodeScalars) {
-        server.stop()
-        if let urlComponents = URLComponents(string: request.uri) {
-          self.code = Code(urlComponents: urlComponents)
-          DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
-            self.sem?.signal()
-          }
-          return ("success! Token received.\n", .ok)
-        } else {
-          return ("failed to get token.\n", .ok)
-        }
-      } else {
-        return ("not found\n", .notFound)
-      }
-    }
+  private struct Session {
+    let webAuthSession: ASWebAuthenticationSession
+    let webAuthContext: ASWebAuthenticationPresentationContextProviding
   }
 
-  @available(iOS 10.0, tvOS 10.0, *)
-  public func signIn(scopes: [String]) throws {
-    let sem = DispatchSemaphore(value: 0)
-    try startServer(sem: sem)
-
+  // The presentation context provides a reference to a UIWindow that the auth
+  // framework uese to display the confirmation modal and sign in controller.
+  public func signIn(
+    scopes: [String],
+    context: ASWebAuthenticationPresentationContextProviding,
+    completion: @escaping (Token?, AuthError?) -> Void
+  ) {
     let state = UUID().uuidString
     let scope = scopes.joined(separator: " ")
-
     var urlComponents = URLComponents(string: credentials.authorizeURL)!
     urlComponents.queryItems = [
       URLQueryItem(name: "client_id", value: credentials.clientID),
@@ -126,14 +107,56 @@ public class BrowserTokenProvider: TokenProvider {
       URLQueryItem(name: "redirect_uri", value: credentials.redirectURI),
       URLQueryItem(name: "state", value: state),
       URLQueryItem(name: "scope", value: scope),
-      URLQueryItem(name: "show_dialog", value: "false"),
     ]
-    openURL(urlComponents.url!)
-    _ = sem.wait(timeout: DispatchTime.distantFuture)
-    token = try code!.exchange(info: credentials)
+
+    let session = ASWebAuthenticationSession(
+      url: urlComponents.url!,
+      callbackURLScheme: credentials.callbackScheme
+    ) { url, err in
+      defer { self.session = nil }
+      if let e = err {
+        completion(nil, .webSession(inner: e))
+        return
+      }
+      guard let u = url else {
+        // If err is nil, url should not be, and vice versa.
+        completion(nil, .unknownError)
+        return
+      }
+      let code = Code(urlComponents: URLComponents(string: u.absoluteString)!)
+      do {
+        self.token = try code.exchange(info: self.credentials)
+        completion(self.token!, nil)
+      } catch let ae as AuthError {
+        completion(nil, ae)
+      } catch {
+        completion(nil, .unknownError)
+      }
+    }
+
+    session.presentationContextProvider = context
+    if !session.canStart {
+      // This happens if the context provider is not set, or if the session has
+      // already been started. We enforce correct usage so ignore.
+      return
+    }
+    let success = session.start()
+    if !success {
+      // This doesn't happen unless the context is not set, disappears (it's a
+      // weak ref internally), or the session was previously started, ignore.
+      return
+    }
+    self.session = Session(webAuthSession: session, webAuthContext: context)
+  }
+
+  // Canceling the session dismisses the view controller if it is showing.
+  public func cancelSignIn() {
+    session?.webAuthSession.cancel()
+    self.session = nil
   }
 
   public func withToken(_ callback: @escaping (Token?, Error?) -> Void) throws {
     callback(token, nil)
   }
 }
+#endif

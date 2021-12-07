@@ -1,0 +1,594 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 55;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		70083F5527556FDB007195C3 /* GAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70083F5427556FDB007195C3 /* GAuth.swift */; };
+		70083F5627556FDB007195C3 /* GAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70083F5427556FDB007195C3 /* GAuth.swift */; };
+		705A071027445B9800BEF60A /* GoogleAPIRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 705A070F27445B9800BEF60A /* GoogleAPIRuntime */; };
+		705A071227445C0B00BEF60A /* GoogleAPIRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 705A071127445C0B00BEF60A /* GoogleAPIRuntime */; };
+		705A071827471D6B00BEF60A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70988A3927443D2E001F41D6 /* ContentView.swift */; };
+		705A071927471DC700BEF60A /* GAuthDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 709889F92742F778001F41D6 /* GAuthDemoApp.swift */; };
+		705A071D274C184600BEF60A /* WindowAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 705A071C274C184600BEF60A /* WindowAccessor.swift */; };
+		705A071F274C18CF00BEF60A /* WindowAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 705A071E274C18CF00BEF60A /* WindowAccessor.swift */; };
+		709889FA2742F778001F41D6 /* GAuthDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 709889F92742F778001F41D6 /* GAuthDemoApp.swift */; };
+		709889FE2742F77A001F41D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 709889FD2742F77A001F41D6 /* Assets.xcassets */; };
+		70988A012742F77A001F41D6 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 70988A002742F77A001F41D6 /* Preview Assets.xcassets */; };
+		70988A30274439A9001F41D6 /* gmailv1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70988A082743037E001F41D6 /* gmailv1.swift */; };
+		70988A3A27443D2E001F41D6 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70988A3927443D2E001F41D6 /* ContentView.swift */; };
+		70988A3C27443D2F001F41D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 70988A3B27443D2F001F41D6 /* Assets.xcassets */; };
+		70988A3F27443D2F001F41D6 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 70988A3E27443D2F001F41D6 /* Preview Assets.xcassets */; };
+		70988A44274450E5001F41D6 /* gmailv1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70988A082743037E001F41D6 /* gmailv1.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		70988A2E27441C76001F41D6 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		70083F53274C5A15007195C3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		70083F5427556FDB007195C3 /* GAuth.swift */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = GAuth.swift; sourceTree = "<group>"; tabWidth = 2; };
+		705A071B27486E7900BEF60A /* .. */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ..; path = ../..; sourceTree = "<group>"; };
+		705A071C274C184600BEF60A /* WindowAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAccessor.swift; sourceTree = "<group>"; };
+		705A071E274C18CF00BEF60A /* WindowAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAccessor.swift; sourceTree = "<group>"; };
+		709889F62742F778001F41D6 /* GAuth-macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "GAuth-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		709889F92742F778001F41D6 /* GAuthDemoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GAuthDemoApp.swift; sourceTree = "<group>"; };
+		709889FD2742F77A001F41D6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		70988A002742F77A001F41D6 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		70988A022742F77A001F41D6 /* gauth-macos.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "gauth-macos.entitlements"; sourceTree = "<group>"; };
+		70988A082743037E001F41D6 /* gmailv1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = gmailv1.swift; sourceTree = "<group>"; };
+		70988A3527443D2E001F41D6 /* GAuth-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "GAuth-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		70988A3927443D2E001F41D6 /* ContentView.swift */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; tabWidth = 2; };
+		70988A3B27443D2F001F41D6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		70988A3E27443D2F001F41D6 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		709889F32742F778001F41D6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				705A071227445C0B00BEF60A /* GoogleAPIRuntime in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		70988A3227443D2E001F41D6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				705A071027445B9800BEF60A /* GoogleAPIRuntime in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		705A071A27486E7900BEF60A /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				705A071B27486E7900BEF60A /* .. */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		709889ED2742F778001F41D6 = {
+			isa = PBXGroup;
+			children = (
+				705A071A27486E7900BEF60A /* Packages */,
+				70988A43274450D8001F41D6 /* Shared */,
+				709889F82742F778001F41D6 /* GAuth-macOS */,
+				70988A3627443D2E001F41D6 /* GAuth-iOS */,
+				709889F72742F778001F41D6 /* Products */,
+				70988A4527445258001F41D6 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		709889F72742F778001F41D6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				709889F62742F778001F41D6 /* GAuth-macOS.app */,
+				70988A3527443D2E001F41D6 /* GAuth-iOS.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		709889F82742F778001F41D6 /* GAuth-macOS */ = {
+			isa = PBXGroup;
+			children = (
+				70083F53274C5A15007195C3 /* Info.plist */,
+				709889FD2742F77A001F41D6 /* Assets.xcassets */,
+				70988A022742F77A001F41D6 /* gauth-macos.entitlements */,
+				709889FF2742F77A001F41D6 /* Preview Content */,
+				705A071E274C18CF00BEF60A /* WindowAccessor.swift */,
+			);
+			path = "GAuth-macOS";
+			sourceTree = "<group>";
+		};
+		709889FF2742F77A001F41D6 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				70988A002742F77A001F41D6 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		70988A3627443D2E001F41D6 /* GAuth-iOS */ = {
+			isa = PBXGroup;
+			children = (
+				70988A3B27443D2F001F41D6 /* Assets.xcassets */,
+				70988A3D27443D2F001F41D6 /* Preview Content */,
+				705A071C274C184600BEF60A /* WindowAccessor.swift */,
+			);
+			path = "GAuth-iOS";
+			sourceTree = "<group>";
+		};
+		70988A3D27443D2F001F41D6 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				70988A3E27443D2F001F41D6 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		70988A43274450D8001F41D6 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				70988A3927443D2E001F41D6 /* ContentView.swift */,
+				709889F92742F778001F41D6 /* GAuthDemoApp.swift */,
+				70988A082743037E001F41D6 /* gmailv1.swift */,
+				70083F5427556FDB007195C3 /* GAuth.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		70988A4527445258001F41D6 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		709889F52742F778001F41D6 /* GAuth-macOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 70988A052742F77A001F41D6 /* Build configuration list for PBXNativeTarget "GAuth-macOS" */;
+			buildPhases = (
+				709889F22742F778001F41D6 /* Sources */,
+				709889F32742F778001F41D6 /* Frameworks */,
+				709889F42742F778001F41D6 /* Resources */,
+				70988A2E27441C76001F41D6 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "GAuth-macOS";
+			packageProductDependencies = (
+				705A071127445C0B00BEF60A /* GoogleAPIRuntime */,
+			);
+			productName = "gmail-test";
+			productReference = 709889F62742F778001F41D6 /* GAuth-macOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		70988A3427443D2E001F41D6 /* GAuth-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 70988A4027443D2F001F41D6 /* Build configuration list for PBXNativeTarget "GAuth-iOS" */;
+			buildPhases = (
+				70988A3127443D2E001F41D6 /* Sources */,
+				70988A3227443D2E001F41D6 /* Frameworks */,
+				70988A3327443D2E001F41D6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "GAuth-iOS";
+			packageProductDependencies = (
+				705A070F27445B9800BEF60A /* GoogleAPIRuntime */,
+			);
+			productName = "Gmail iOS";
+			productReference = 70988A3527443D2E001F41D6 /* GAuth-iOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		709889EE2742F778001F41D6 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1310;
+				LastUpgradeCheck = 1310;
+				TargetAttributes = {
+					709889F52742F778001F41D6 = {
+						CreatedOnToolsVersion = 13.1;
+					};
+					70988A3427443D2E001F41D6 = {
+						CreatedOnToolsVersion = 13.1;
+					};
+				};
+			};
+			buildConfigurationList = 709889F12742F778001F41D6 /* Build configuration list for PBXProject "GAuth-Apple" */;
+			compatibilityVersion = "Xcode 13.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 709889ED2742F778001F41D6;
+			packageReferences = (
+				705A070E27445B9800BEF60A /* XCRemoteSwiftPackageReference "google-api-swift-client" */,
+			);
+			productRefGroup = 709889F72742F778001F41D6 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				709889F52742F778001F41D6 /* GAuth-macOS */,
+				70988A3427443D2E001F41D6 /* GAuth-iOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		709889F42742F778001F41D6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70988A012742F77A001F41D6 /* Preview Assets.xcassets in Resources */,
+				709889FE2742F77A001F41D6 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		70988A3327443D2E001F41D6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70988A3F27443D2F001F41D6 /* Preview Assets.xcassets in Resources */,
+				70988A3C27443D2F001F41D6 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		709889F22742F778001F41D6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70988A30274439A9001F41D6 /* gmailv1.swift in Sources */,
+				705A071827471D6B00BEF60A /* ContentView.swift in Sources */,
+				705A071F274C18CF00BEF60A /* WindowAccessor.swift in Sources */,
+				709889FA2742F778001F41D6 /* GAuthDemoApp.swift in Sources */,
+				70083F5527556FDB007195C3 /* GAuth.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		70988A3127443D2E001F41D6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70988A44274450E5001F41D6 /* gmailv1.swift in Sources */,
+				705A071927471DC700BEF60A /* GAuthDemoApp.swift in Sources */,
+				705A071D274C184600BEF60A /* WindowAccessor.swift in Sources */,
+				70988A3A27443D2E001F41D6 /* ContentView.swift in Sources */,
+				70083F5627556FDB007195C3 /* GAuth.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		70988A032742F77A001F41D6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		70988A042742F77A001F41D6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		70988A062742F77A001F41D6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "GAuth-macOS/gauth-macos.entitlements";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "GAuth-macOS/Preview\\ Content/Preview\\ Assets.xcassets";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "GAuth-macOS/Info.plist";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.gauth-macos";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		70988A072742F77A001F41D6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "GAuth-macOS/gauth-macos.entitlements";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "GAuth-macOS/Preview\\ Content/Preview\\ Assets.xcassets";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "GAuth-macOS/Info.plist";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.gauth-macos";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		70988A4127443D2F001F41D6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "GAuth-iOS/Preview\\ Content/Preview\\ Assets.xcassets";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.gauth-ios";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		70988A4227443D2F001F41D6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "GAuth-iOS/Preview\\ Content/Preview\\ Assets.xcassets";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.gauth-ios";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		709889F12742F778001F41D6 /* Build configuration list for PBXProject "GAuth-Apple" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				70988A032742F77A001F41D6 /* Debug */,
+				70988A042742F77A001F41D6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		70988A052742F77A001F41D6 /* Build configuration list for PBXNativeTarget "GAuth-macOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				70988A062742F77A001F41D6 /* Debug */,
+				70988A072742F77A001F41D6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		70988A4027443D2F001F41D6 /* Build configuration list for PBXNativeTarget "GAuth-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				70988A4127443D2F001F41D6 /* Debug */,
+				70988A4227443D2F001F41D6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		705A070E27445B9800BEF60A /* XCRemoteSwiftPackageReference "google-api-swift-client" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleapis/google-api-swift-client";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		705A070F27445B9800BEF60A /* GoogleAPIRuntime */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 705A070E27445B9800BEF60A /* XCRemoteSwiftPackageReference "google-api-swift-client" */;
+			productName = GoogleAPIRuntime;
+		};
+		705A071127445C0B00BEF60A /* GoogleAPIRuntime */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 705A070E27445B9800BEF60A /* XCRemoteSwiftPackageReference "google-api-swift-client" */;
+			productName = GoogleAPIRuntime;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 709889EE2742F778001F41D6 /* Project object */;
+}
