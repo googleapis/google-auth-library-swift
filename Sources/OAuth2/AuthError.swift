@@ -14,6 +14,7 @@
 import Foundation
 
 public enum AuthError: Error {
+  case noRefreshToken
   case unknownError
   case webSession(inner: Error)
 }

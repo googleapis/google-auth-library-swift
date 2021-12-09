@@ -18,9 +18,9 @@ import Foundation
 import AuthenticationServices
 
 public struct NativeCredentials: Codable, CodeExchangeInfo, RefreshExchangeInfo {
-  public let clientID: String
+  let clientID: String
   let authorizeURL: String
-  public let accessTokenURL: String
+  let accessTokenURL: String
   let callbackScheme: String
   enum CodingKeys: String, CodingKey {
     case clientID = "client_id"
@@ -31,7 +31,7 @@ public struct NativeCredentials: Codable, CodeExchangeInfo, RefreshExchangeInfo 
   var redirectURI: String {
     callbackScheme + ":/oauth2redirect"
   }
-  public var clientSecret: String {
+  var clientSecret: String {
     ""
   }
 }
@@ -83,6 +83,13 @@ public class PlatformNativeTokenProvider: TokenProvider {
   public func saveToken(_ filename: String) throws {
     if let token = token {
       try token.save(filename)
+    }
+  }
+
+  public func refreshToken(_ filename: String) throws {
+    if let token = token, token.isExpired() {
+      self.token = try Refresh(token: token).exchange(info: credentials)
+      try saveToken(filename)
     }
   }
 

@@ -14,33 +14,30 @@
 
 import Foundation
 
-public protocol RefreshExchangeInfo {
+protocol RefreshExchangeInfo {
   var accessTokenURL: String { get }
   var clientID: String { get }
   var clientSecret: String { get }
 }
 
-public class Refresh {
+class Refresh {
     
   let token: String
     
-  public convenience init?(token data: Data) {
-    if let token = try? JSONDecoder().decode(Token.self, from: data) {
-      self.init(token: token)
-    } else {
-      return nil
-    }
+  convenience init(token data: Data) throws {
+    let token = try JSONDecoder().decode(Token.self, from: data)
+    try self.init(token: token)
   }
   
-  init?(token: Token) {
+  init(token: Token) throws {
     if let rt = token.RefreshToken {
       self.token = rt
-      return
+    } else {
+        throw AuthError.noRefreshToken
     }
-    return nil
   }
-  
-  public func exchange(info: RefreshExchangeInfo) throws -> Token {
+
+  func exchange(info: RefreshExchangeInfo) throws -> Token {
     let sem = DispatchSemaphore(value: 0)
     let parameters = [
       "client_id": info.clientID,

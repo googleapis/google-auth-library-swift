@@ -20,7 +20,7 @@ import Foundation
 import NIOHTTP1
 import TinyHTTPServer
 
-struct Credentials: Codable, CodeExchangeInfo {
+struct Credentials: Codable, CodeExchangeInfo, RefreshExchangeInfo {
   let clientID: String
   let clientSecret: String
   let authorizeURL: String
@@ -85,6 +85,13 @@ public class BrowserTokenProvider: TokenProvider {
   public func saveToken(_ filename: String) throws {
     if let token = token {
       try token.save(filename)
+    }
+  }
+
+  public func refreshToken(_ filename: String) throws {
+    if let token = token, token.isExpired() {
+      self.token = try Refresh(token: token).exchange(info: credentials)
+      try saveToken(filename)
     }
   }
 

@@ -46,15 +46,7 @@ public struct Token : Codable {
     let expireDate = creationTime.addingTimeInterval(TimeInterval(expiresIn))
     return expireDate.timeIntervalSinceNow
   }
-    
-  public func refresh(info: RefreshExchangeInfo) -> Token? {
-    if isExpired() {
-      return try? Refresh(token: self)?.exchange(info: info)
-    } else {
-      return self
-    }
-  }
-  
+
   public init(accessToken: String) {
     self.AccessToken = accessToken
   }

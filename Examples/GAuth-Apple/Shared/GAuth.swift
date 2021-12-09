@@ -55,18 +55,21 @@ let creds_browser = """
 }
 """
 
-func oauth2_browser() {
+func browser_provider() -> BrowserTokenProvider {
   let cdata = creds_browser.data(using: .utf8)!
-  let tfile = token_cache_url()?.path ?? ""
+  let tfile = token_cache_url(.browser)?.path ?? ""
   guard let tp = BrowserTokenProvider(credentials: cdata, token: tfile)
   else {
-    print("error creating browser token provider")
-    return
+    fatalError("error creating browser token provider")
   }
+  return tp
+}
+
+func oauth2_browser() {
+  let tp = browser_provider()
 
   if tp.token != nil {
     print("using existing token")
-    query_gmail(tp)
     return
   }
 
@@ -78,9 +81,8 @@ func oauth2_browser() {
     print("error signing in: \(e)")
     return
   }
-  try! tp.saveToken(tfile)
-
-  query_gmail(tp)
+  try! tp.saveToken(token_cache_url(.browser)!.path)
+  print("token saved")
 }
 
 // MARK: oauth2 native
@@ -95,18 +97,21 @@ let creds_native = """
 }
 """
 
-func oauth2_native(anchor a: ASPresentationAnchor) {
+func native_provider() -> PlatformNativeTokenProvider {
   let cdata = creds_native.data(using: .utf8)!
-  let tfile = token_cache_url()?.path ?? ""
+  let tfile = token_cache_url(.native)?.path ?? ""
   guard let tp = PlatformNativeTokenProvider(credentials: cdata, token: tfile)
   else {
-    print("error creating native token provider")
-    return
+    fatalError("error creating native token provider")
   }
+  return tp
+}
+
+func oauth2_native(anchor a: ASPresentationAnchor) {
+  let tp = native_provider()
 
   if tp.token != nil {
     print("using existing token")
-    query_gmail(tp)
     return
   }
 
@@ -114,10 +119,9 @@ func oauth2_native(anchor a: ASPresentationAnchor) {
   let ctx = AuthContext(anchor: a)
   let readonly = "https://www.googleapis.com/auth/gmail.readonly"
   tp.signIn(scopes: [readonly], context: ctx) {
-    if let token = $0 {
-      print("token: \(token)")
-      try! tp.saveToken(tfile)
-      query_gmail(tp)
+    if $0 != nil { // token
+      try! tp.saveToken(token_cache_url(.native)!.path)
+      print("token saved")
     } else {
       print("error signing in: \($1!)")
     }
@@ -135,7 +139,49 @@ class AuthContext: NSObject, ASWebAuthenticationPresentationContextProviding {
   }
 }
 
+// MARK: general
+
+enum FlowType: String {
+  case browser = "browser"
+  case native = "native"
+}
+
+func token_cache_url(_ flow: FlowType) -> URL? {
+  FileManager.default
+    .urls(for: .cachesDirectory, in: .userDomainMask).first?
+    .appendingPathComponent("gauth-token-\(flow.rawValue).json")
+}
+
+func token_cache_clear(_ flow: FlowType) {
+  if let url = token_cache_url(flow) {
+    try? FileManager.default.removeItem(at: url)
+  }
+}
+
+func token_refresh(_ flow: FlowType) {
+  switch flow {
+  case .browser:
+    let tp = browser_provider()
+    try! tp.refreshToken(token_cache_url(.browser)!.path)
+  case .native:
+    let tp = native_provider()
+    try! tp.refreshToken(token_cache_url(.native)!.path)
+  }
+  print("token refreshed")
+}
+
 // MARK: query gmail
+
+func query_gmail(_ flow: FlowType) {
+  switch flow {
+  case .browser:
+    let tp = browser_provider()
+    query_gmail(tp)
+  case .native:
+    let tp = native_provider()
+    query_gmail(tp)
+  }
+}
 
 func query_gmail(_ tp: TokenProvider) {
   print("Listing Gmail Messages")
@@ -156,33 +202,4 @@ func query_gmail(_ tp: TokenProvider) {
   } catch let e {
     print("error listing messages: \(e)")
   }
-}
-
-func token_cache_url() -> URL? {
-  FileManager.default
-    .urls(for: .cachesDirectory, in: .userDomainMask).first?
-    .appendingPathComponent("gauth-token.json")
-}
-
-func token_cache_clear() {
-  if let url = token_cache_url() {
-    try? FileManager.default.removeItem(at: url)
-  }
-}
-
-func token_refresh() {
-  let data = try! Data(contentsOf: token_cache_url()!)
-  let cdata = creds_native.data(using: .utf8)!
-  let creds = try! JSONDecoder().decode(NativeCredentials.self, from: cdata)
-  let newToken = try! Refresh(token: data)!.exchange(info: creds)
-  print(newToken)
-
-  // now to save... ...
-  // clearly this is not good yet
-  // we need refreshToken to be dispatched from the provider itself.
-  // ..will rework
-  let tfile = token_cache_url()?.path ?? ""
-  let tp = PlatformNativeTokenProvider(credentials: cdata, token: tfile)!
-  tp.token = newToken
-  try! tp.saveToken(tfile)
 }
