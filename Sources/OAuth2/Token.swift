@@ -36,7 +36,7 @@ public struct Token : Codable {
   }
   
   public func isExpired() -> Bool {
-    return timeToExpiry() > 0
+    return timeToExpiry() <= 0
   }
 
   public func timeToExpiry() -> TimeInterval {
