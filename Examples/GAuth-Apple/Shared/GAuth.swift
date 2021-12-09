@@ -169,3 +169,20 @@ func token_cache_clear() {
     try? FileManager.default.removeItem(at: url)
   }
 }
+
+func token_refresh() {
+  let data = try! Data(contentsOf: token_cache_url()!)
+  let cdata = creds_native.data(using: .utf8)!
+  let creds = try! JSONDecoder().decode(NativeCredentials.self, from: cdata)
+  let newToken = try! Refresh(token: data)!.exchange(info: creds)
+  print(newToken)
+
+  // now to save... ...
+  // clearly this is not good yet
+  // we need refreshToken to be dispatched from the provider itself.
+  // ..will rework
+  let tfile = token_cache_url()?.path ?? ""
+  let tp = PlatformNativeTokenProvider(credentials: cdata, token: tfile)!
+  tp.token = newToken
+  try! tp.saveToken(tfile)
+}

@@ -17,10 +17,10 @@ import Dispatch
 import Foundation
 import AuthenticationServices
 
-struct NativeCredentials: Codable, CodeExchangeInfo {
-  let clientID: String
+public struct NativeCredentials: Codable, CodeExchangeInfo, RefreshExchangeInfo {
+  public let clientID: String
   let authorizeURL: String
-  let accessTokenURL: String
+  public let accessTokenURL: String
   let callbackScheme: String
   enum CodingKeys: String, CodingKey {
     case clientID = "client_id"
@@ -31,7 +31,7 @@ struct NativeCredentials: Codable, CodeExchangeInfo {
   var redirectURI: String {
     callbackScheme + ":/oauth2redirect"
   }
-  var clientSecret: String {
+  public var clientSecret: String {
     ""
   }
 }

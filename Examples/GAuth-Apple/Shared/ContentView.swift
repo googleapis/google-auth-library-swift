@@ -42,12 +42,18 @@ struct ContentView: View {
         Text("Login Native")
       }
       Spacer()
-      Button {
-        token_cache_clear()
-      } label: {
-        Text("Clear Token Cache")
+      HStack {
+        Button {
+          token_refresh()
+        } label: {
+          Text("Refresh Token")
+        }
+        Button {
+          token_cache_clear()
+        } label: {
+          Text("Clear Token Cache")
+        }
       }
-
     }
     .padding()
     .background(WindowAccessor(window: $window))
