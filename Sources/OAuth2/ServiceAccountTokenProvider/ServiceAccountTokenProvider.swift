@@ -109,7 +109,7 @@ public class ServiceAccountTokenProvider : TokenProvider {
         let token = try? decoder.decode(Token.self, from: data) {
         self.token = token
         self.token?.CreationTime = Date()
-        callback(token, error)
+        callback(self.token, error)
       } else {
         callback(nil, error)
       }
