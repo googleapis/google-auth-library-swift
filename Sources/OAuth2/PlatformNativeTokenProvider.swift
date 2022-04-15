@@ -17,7 +17,7 @@ import Dispatch
 import Foundation
 import AuthenticationServices
 
-struct NativeCredentials: Codable, CodeExchangeInfo {
+public struct NativeCredentials: Codable, CodeExchangeInfo, RefreshExchangeInfo {
   let clientID: String
   let authorizeURL: String
   let accessTokenURL: String
@@ -83,6 +83,13 @@ public class PlatformNativeTokenProvider: TokenProvider {
   public func saveToken(_ filename: String) throws {
     if let token = token {
       try token.save(filename)
+    }
+  }
+
+  public func refreshToken(_ filename: String) throws {
+    if let token = token, token.isExpired() {
+      self.token = try Refresh(token: token).exchange(info: credentials)
+      try saveToken(filename)
     }
   }
 

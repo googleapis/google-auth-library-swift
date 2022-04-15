@@ -36,10 +36,9 @@ public struct Token : Codable {
   }
   
   public func isExpired() -> Bool {
-    return timeToExpiry() > 0
+    return timeToExpiry() <= 0
   }
 
-  
   public func timeToExpiry() -> TimeInterval {
     guard let expiresIn = ExpiresIn, let creationTime = CreationTime else {
       return 0.0 // if we dont know when it expires, assume its expired
@@ -47,7 +46,7 @@ public struct Token : Codable {
     let expireDate = creationTime.addingTimeInterval(TimeInterval(expiresIn))
     return expireDate.timeIntervalSinceNow
   }
-  
+
   public init(accessToken: String) {
     self.AccessToken = accessToken
   }

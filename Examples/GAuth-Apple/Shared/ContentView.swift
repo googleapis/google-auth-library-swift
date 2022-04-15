@@ -24,30 +24,59 @@ struct ContentView: View {
       HStack { Spacer().frame(maxWidth: .infinity) }
       Text("GAuth Example")
       Divider()
-      Spacer()
 
-      Button(action: {
-        oauth2_browser()
-      }) {
-        Text("Login Browser")
+      VStack {
+        Text("Browser")
+        Button {
+          oauth2_browser()
+        } label: {
+          Text("Login")
+        }
+        Button {
+          token_refresh(.native)
+        } label: {
+          Text("Refresh Token")
+        }
+        Button {
+          query_gmail(.native)
+        } label: {
+          Text("Query Gmail")
+        }
+        Button {
+          token_cache_clear(.native)
+        } label: {
+          Text("Clear Token Cache")
+        }
       }
 
       Divider()
         .padding()
         .frame(maxWidth: 120)
 
-      Button(action: {
-        oauth2_native(anchor: window!)
-      }) {
-        Text("Login Native")
+      VStack {
+        Text("Native")
+        Button {
+          oauth2_native(anchor: window!)
+        } label: {
+          Text("Login")
+        }
+        Button {
+          token_refresh(.native)
+        } label: {
+          Text("Refresh Token")
+        }
+        Button {
+          query_gmail(.native)
+        } label: {
+          Text("Query Gmail")
+        }
+        Button {
+          token_cache_clear(.native)
+        } label: {
+          Text("Clear Token Cache")
+        }
       }
       Spacer()
-      Button {
-        token_cache_clear()
-      } label: {
-        Text("Clear Token Cache")
-      }
-
     }
     .padding()
     .background(WindowAccessor(window: $window))
