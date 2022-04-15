@@ -87,9 +87,7 @@ class Code {
     }
     _ = sem.wait(timeout: DispatchTime.distantFuture)
     if let contentType = contentType, contentType.contains("application/json") {
-      let decoder = JSONDecoder()
-      let token = try! decoder.decode(Token.self, from: responseData!)
-      return token
+      return try JSONDecoder().decode(Token.self, from: responseData!)
     } else { // assume "application/x-www-form-urlencoded"
       guard let responseData = responseData else {
         throw AuthError.unknownError
