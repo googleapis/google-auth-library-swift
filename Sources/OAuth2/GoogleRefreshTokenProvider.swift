@@ -74,9 +74,7 @@ public class GoogleRefreshTokenProvider: TokenProvider {
     }
     _ = sem.wait(timeout: DispatchTime.distantFuture)
     // assume content type is "application/json"
-    let decoder = JSONDecoder()
-    let token = try? decoder.decode(Token.self, from: responseData!)
-    return token
+    return try JSONDecoder().decode(Token.self, from: responseData!)
   }
 
   public func withToken(_ callback: @escaping (Token?, Error?) -> Void) throws {

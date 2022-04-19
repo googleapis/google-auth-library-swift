@@ -74,11 +74,8 @@ public class Connection {
     callback: @escaping (Data?, URLResponse?, Error?) -> Void) throws {
     
     try provider.withToken {token, err in
-      guard let token = token else {
-        return
-      }
-      guard let accessToken = token.AccessToken else {
-        return
+      guard let accessToken = token?.AccessToken else {
+        return callback(nil, nil, AuthError.unknownError)
       }
       Connection.performRequest(
         method: method,

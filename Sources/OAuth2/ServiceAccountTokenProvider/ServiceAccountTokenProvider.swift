@@ -94,7 +94,7 @@ public class ServiceAccountTokenProvider : TokenProvider {
                                       rsaKey:rsaKey)
     let json: [String: Any] = ["grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer",
                            "assertion": msg]
-    let data = try? JSONSerialization.data(withJSONObject: json)    
+    let data = try JSONSerialization.data(withJSONObject: json)
   
     var urlRequest = URLRequest(url:URL(string:credentials.TokenURI)!)
     urlRequest.httpMethod = "POST"
@@ -104,9 +104,8 @@ public class ServiceAccountTokenProvider : TokenProvider {
     let session = URLSession(configuration: URLSessionConfiguration.default)
     let task: URLSessionDataTask = session.dataTask(with:urlRequest)
     {(data, response, error) -> Void in
-      let decoder = JSONDecoder()
       if let data = data,
-        let token = try? decoder.decode(Token.self, from: data) {
+        let token = try? JSONDecoder().decode(Token.self, from: data) {
         self.token = token
         self.token?.CreationTime = Date()
         callback(self.token, error)
