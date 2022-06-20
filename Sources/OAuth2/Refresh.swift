@@ -73,14 +73,26 @@ class Refresh {
       sem.signal()
     }
     _ = sem.wait(timeout: DispatchTime.distantFuture)
+
+    guard let responseData = responseData else {
+      throw AuthError.unknownError
+    }
+
     if let contentType = contentType, contentType.contains("application/json") {
       let decoder = JSONDecoder()
-      let token = try! decoder.decode(Token.self, from: responseData!)
+      var token = try decoder.decode(Token.self, from: responseData)
+
+      if token.CreationTime == nil {
+        token.CreationTime = Date()
+      }
+
+      if token.RefreshToken == nil {
+        // Google refresh tokens are persistent
+        token.RefreshToken = self.token
+      }
+
       return token
     } else { // assume "application/x-www-form-urlencoded"
-      guard let responseData = responseData else {
-        throw AuthError.unknownError
-      }
       guard let queryParameters = String(data: responseData, encoding: .utf8) else {
         throw AuthError.unknownError
       }
