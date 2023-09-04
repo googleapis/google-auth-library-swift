@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
     - name: Install Swift
       run: |
         SWIFT_URL=https://swift.org/builds/swift-5.1.1-release/ubuntu1404/swift-5.1.1-RELEASE/swift-5.1.1-RELEASE-ubuntu14.04.tar.gz
@@ -28,7 +28,7 @@ jobs:
     runs-on: macOS-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Build
         run: |
           swift package -v resolve
