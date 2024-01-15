@@ -16,6 +16,7 @@ import Foundation
 #if canImport(FoundationNetworking)
   import FoundationNetworking
 #endif
+import JWTKit
 
 struct ServiceAccountCredentials : Codable {
   let CredentialType : String
@@ -58,7 +59,7 @@ public class ServiceAccountTokenProvider : TokenProvider {
     }
     self.credentials = credentials
     self.scopes = scopes
-    guard let rsaKey = RSAKey(privateKey:credentials.PrivateKey)
+    guard let rsaKey = try? RSAKey.private(pem: credentials.PrivateKey)
       else {
         return nil
     }

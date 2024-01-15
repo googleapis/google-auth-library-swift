@@ -49,7 +49,7 @@ public class Connection {
     
     // generate the signature
     let hmac = try! CryptoSwift.HMAC(key: secret, variant: .sha1).authenticate(Array(signatureBaseString.utf8))
-    parameters["oauth_signature"] = hmac.toBase64()!
+    parameters["oauth_signature"] = hmac.toBase64()
   }
   
   public class func performRequest(

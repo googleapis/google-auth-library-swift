@@ -15,6 +15,7 @@
 import Foundation
 import CryptoSwift
 import SwiftyBase64
+import JWTKit
 
 struct JWTHeader : Codable {
   let Algorithm : String
@@ -51,9 +52,8 @@ struct JWT {
     let claims = SwiftyBase64.EncodeString(Array(claimsData), alphabet:.URLAndFilenameSafe)
     let body = header + "." + claims
     let bodyData = body.data(using: String.Encoding.utf8)!
-    let sha2 = SHA2(variant: SHA2.Variant(rawValue:256)!)
-    let hash = sha2.calculate(for:Array(bodyData))
-    let signature = rsaKey.sign(hash:hash)
+    let signer = JWTSigner.rs256(key: rsaKey)
+    let signature = try signer.algorithm.sign(bodyData)
     let signatureString = SwiftyBase64.EncodeString(signature, alphabet:.URLAndFilenameSafe)
     return body + "." + signatureString
   }
