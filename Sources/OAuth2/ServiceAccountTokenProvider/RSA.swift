@@ -14,11 +14,14 @@
 
 import Foundation
 import BigInt
+import CryptoSwift
 
 struct RSAKey {
-  var N : BigUInt
-  var E : BigUInt
-  var D : BigUInt
+  var N : BigUInteger
+  var E : BigUInteger
+  var D : BigUInteger
+  var rsa: RSA
+    
   /*
    var Primes : [BigUInt]
    var Dp: BigUInt
@@ -35,31 +38,16 @@ struct RSAKey {
     }
     if let der = Data(base64Encoded: pem, options: []),
       let asn1Array = ASN1Decoder.decode(der: der) {
-      N = BigUInt(asn1Array[2].children?[1].data ?? Data())
-      E = BigUInt(asn1Array[2].children?[2].data ?? Data())
-      D = BigUInt(asn1Array[2].children?[3].data ?? Data())
+      N = BigUInteger(asn1Array[2].children?[1].data ?? Data())
+      E = BigUInteger(asn1Array[2].children?[2].data ?? Data())
+      D = BigUInteger(asn1Array[2].children?[3].data ?? Data())
+      rsa = RSA(n: N, e: E, d: D)
     } else {
       return nil
     }
   }
   
   func sign(hash:[UInt8]) -> [UInt8] {
-    let prefix : [UInt8] = [0x30, 0x31, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01, 0x05, 0x00, 0x04, 0x20]
-    var dataToEncode = [UInt8](repeating: 0xFF, count: 256)
-    dataToEncode[0] = 0x00
-    dataToEncode[1] = 0x01
-    let offset1 = 256 - hash.count - prefix.count
-    dataToEncode[offset1 - 1] = 0x00
-    for i in 0..<prefix.count {
-      dataToEncode[offset1+i] = prefix[i]
-    }
-    let offset2 = 256 - hash.count
-    for i in 0..<hash.count {
-      dataToEncode[offset2+i] = hash[i]
-    }
-    let message = BigUInt(Data(dataToEncode))
-    let signature = message.power(self.D, modulus: self.N)
-    //let verify = signature.power(self.E, modulus: self.N)
-    return Array(signature.serialize())
+    return try! rsa.sign(hash)
   }
 }
