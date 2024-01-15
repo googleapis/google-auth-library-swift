@@ -47,7 +47,7 @@ struct RSAKey {
     }
   }
   
-  func sign(hash:[UInt8]) -> [UInt8] {
-    return try! rsa.sign(hash)
+  func sign(bytes:[UInt8]) -> [UInt8] {
+    return try! rsa.sign(bytes)
   }
 }

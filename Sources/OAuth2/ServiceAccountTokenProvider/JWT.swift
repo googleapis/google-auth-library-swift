@@ -51,9 +51,7 @@ struct JWT {
     let claims = SwiftyBase64.EncodeString(Array(claimsData), alphabet:.URLAndFilenameSafe)
     let body = header + "." + claims
     let bodyData = body.data(using: String.Encoding.utf8)!
-    let sha2 = SHA2(variant: SHA2.Variant(rawValue:256)!)
-    let hash = sha2.calculate(for:Array(bodyData))
-    let signature = rsaKey.sign(hash:hash)
+    let signature = rsaKey.sign(bytes: Array(bodyData))
     let signatureString = SwiftyBase64.EncodeString(signature, alphabet:.URLAndFilenameSafe)
     return body + "." + signatureString
   }
