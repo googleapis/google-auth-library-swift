@@ -1,4 +1,4 @@
-// swift-tools-version:5.0
+// swift-tools-version:5.1
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,7 @@ import PackageDescription
 let package = Package(
   name: "Auth",
   platforms: [
-    .macOS(.v10_12), .iOS(.v9), .tvOS(.v9)
+    .macOS(.v10_15), .iOS(.v9), .tvOS(.v9)
   ],
   products: [
     .library(name: "OAuth1", targets: ["OAuth1"]),
@@ -30,16 +30,26 @@ let package = Package(
   dependencies: [
     .package(url: "https://github.com/apple/swift-nio.git", from: "2.59.0"),
     .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.8.1"),
-    .package(url: "https://github.com/attaswift/BigInt", from: "5.0.0"),
+    .package(url: "https://github.com/attaswift/BigInt.git", from: "5.0.0"),
+    .package(url: "https://github.com/vapor/jwt-kit.git", from: "4.0.0"),
   ],
   targets: [
     .target(name: "OAuth1",
-            dependencies: ["CryptoSwift", "TinyHTTPServer"]),
+            dependencies: [
+                .product(name: "CryptoSwift", package: "CryptoSwift"),
+                "TinyHTTPServer"
+            ]),
     .target(name: "OAuth2",
-            dependencies: ["CryptoSwift", "TinyHTTPServer", "BigInt", "SwiftyBase64"],
+            dependencies: [.product(name: "CryptoSwift", package: "CryptoSwift"),
+                           "TinyHTTPServer",
+                           .product(name: "BigInt", package: "BigInt"),
+                           "SwiftyBase64",
+                           .product(name: "JWTKit", package: "jwt-kit")
+                          ],
             exclude: ["FCMTokenProvider"]),
     .target(name: "TinyHTTPServer",
-	    dependencies: ["NIO", "NIOHTTP1"]),
+	    dependencies: [.product(name: "NIO" , package: "swift-nio"),
+                       .product(name: "NIOHTTP1" , package: "swift-nio")]),
     .target(name: "SwiftyBase64"),
     .target(name: "TokenSource", dependencies: ["OAuth2"], path: "Sources/Examples/TokenSource"),
     .target(name: "Google",      dependencies: ["OAuth2"], path: "Sources/Examples/Google"),
