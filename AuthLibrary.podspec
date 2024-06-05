@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name = "AuthLibrary"
-  s.version = "0.5.0"
+  s.version = "0.5.2"
   s.summary = "Auth client library for Swift command-line tools, cloud services, and apps."
   s.swift_version = "5.0"
   s.ios.deployment_target = "10.0"
