@@ -101,7 +101,7 @@ public class ServiceAccountTokenProvider : TokenProvider {
     urlRequest.httpBody = data
     urlRequest.setValue("application/json", forHTTPHeaderField:"Content-Type")
     
-    let session = URLSession(configuration: URLSessionConfiguration.default)
+    let session = URLSession.shared
     let task: URLSessionDataTask = session.dataTask(with:urlRequest)
     {(data, response, error) -> Void in
       if let data = data,
